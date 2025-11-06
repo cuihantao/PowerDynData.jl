@@ -1,0 +1,139 @@
+model:
+  name: EXST1
+  description: ST1-type static excitation system
+  category: exciter
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: true
+  line_count: 2
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Generator ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: TR
+  position: 4
+  type: Float64
+  description: Measurement delay
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.01
+- name: VIMAX
+  position: 5
+  type: Float64
+  description: Maximum input voltage
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.2
+- name: VIMIN
+  position: 6
+  type: Float64
+  description: Minimum input voltage
+  unit: pu
+  required: true
+  default: 0.0
+- name: TC
+  position: 7
+  type: Float64
+  description: Lead-lag lead time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 1.0
+- name: TB
+  position: 8
+  type: Float64
+  description: Lead-lag lag time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 1.0
+- name: KA
+  position: 9
+  type: Float64
+  description: Regulator gain
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 80.0
+- name: TA
+  position: 10
+  type: Float64
+  description: Regulator time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.05
+- name: VRMAX
+  position: 11
+  type: Float64
+  description: Maximum regulator output
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 8.0
+- name: VRMIN
+  position: 12
+  type: Float64
+  description: Minimum regulator output
+  unit: pu
+  required: true
+  default: -3.0
+- name: KC
+  position: 13
+  type: Float64
+  description: Rectifier loading factor for Ifd
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.2
+- name: KF
+  position: 14
+  type: Float64
+  description: Feedback gain
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.1
+- name: TF
+  position: 15
+  type: Float64
+  description: Feedback time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 1.0

@@ -1,0 +1,195 @@
+model:
+  name: EXAC1
+  description: AC exciter model with controlled rectifier and feedback
+  category: exciter
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: true
+  line_count: 2
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number where generator is connected
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Generator identifier (1-2 characters)
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: TR
+  position: 4
+  type: Float64
+  description: Sensing time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.01
+- name: TB
+  position: 5
+  type: Float64
+  description: Lag time constant in lead-lag
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 1.0
+- name: TC
+  position: 6
+  type: Float64
+  description: Lead time constant in lead-lag
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 1.0
+- name: KA
+  position: 7
+  type: Float64
+  description: Regulator gain
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 80.0
+- name: TA
+  position: 8
+  type: Float64
+  description: Lag time constant in regulator
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.04
+- name: VRMAX
+  position: 9
+  type: Float64
+  description: Maximum regulator output
+  unit: pu
+  required: true
+  range:
+  - 0.5
+  - 10.0
+  default: 8.0
+- name: VRMIN
+  position: 10
+  type: Float64
+  description: Minimum regulator output
+  unit: pu
+  required: true
+  range:
+  - -10.0
+  - 0.5
+  default: 0.0
+- name: TE
+  position: 11
+  type: Float64
+  description: Exciter integrator time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.8
+- name: KF
+  position: 12
+  type: Float64
+  description: Feedback gain
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.1
+- name: TF
+  position: 13
+  type: Float64
+  description: Feedback time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 1.0
+- name: KC
+  position: 14
+  type: Float64
+  description: Rectifier loading factor proportional to commutating reactance
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 1.0
+  default: 0.1
+- name: KD
+  position: 15
+  type: Float64
+  description: Demagnetizing factor (Ifd feedback gain)
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 1.0
+  default: 0.0
+- name: KE
+  position: 16
+  type: Float64
+  description: Saturation feedback gain
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 1.0
+- name: E1
+  position: 17
+  type: Float64
+  description: First saturation point
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.0
+- name: SE1
+  position: 18
+  type: Float64
+  description: Saturation value at first point
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.0
+- name: E2
+  position: 19
+  type: Float64
+  description: Second saturation point
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 1.0
+- name: SE2
+  position: 20
+  type: Float64
+  description: Saturation value at second point
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 1.0

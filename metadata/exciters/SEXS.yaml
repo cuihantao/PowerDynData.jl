@@ -1,0 +1,81 @@
+model:
+  name: SEXS
+  description: Simplified Excitation System
+  category: exciter
+  version: 33
+
+parsing:
+  model_name_field: 2
+  multi_line: false
+  line_count: 1
+  terminator: "/"
+  flexible_fields: false
+
+fields:
+  - name: BUS
+    position: 1
+    type: Int
+    description: "Bus number where generator is connected"
+    unit: dimensionless
+    required: true
+
+  - name: ID
+    position: 3
+    type: String
+    description: "Generator identifier (1-2 characters)"
+    unit: dimensionless
+    required: true
+    default: "1"
+
+  - name: TATB
+    position: 4
+    type: Float64
+    description: "Time constant TA/TB"
+    unit: dimensionless
+    required: true
+    range: [0.05, 1.0]
+    default: 0.4
+
+  - name: TB
+    position: 5
+    type: Float64
+    description: "Time constant TB in lead-lag"
+    unit: seconds
+    required: true
+    range: [5.0, 20.0]
+    default: 5.0
+
+  - name: K
+    position: 6
+    type: Float64
+    description: "Gain"
+    unit: pu
+    required: true
+    range: [20.0, 100.0]
+    default: 20.0
+
+  - name: TE
+    position: 7
+    type: Float64
+    description: "Anti-windup lag time constant"
+    unit: seconds
+    required: true
+    range: [0.0, 0.5]
+    default: 1.0
+
+  - name: EMIN
+    position: 8
+    type: Float64
+    description: "Lower excitation limit"
+    unit: pu
+    required: true
+    default: -99.0
+
+  - name: EMAX
+    position: 9
+    type: Float64
+    description: "Upper excitation limit"
+    unit: pu
+    required: true
+    range: [3.0, 6.0]
+    default: 99.0

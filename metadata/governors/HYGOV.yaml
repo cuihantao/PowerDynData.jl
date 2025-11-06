@@ -1,0 +1,142 @@
+model:
+  name: HYGOV
+  description: Hydro turbine governor model
+  category: governor
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: true
+  line_count: 2
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Generator ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: R
+  position: 4
+  type: Float64
+  description: Permanent droop
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.05
+- name: r
+  position: 5
+  type: Float64
+  description: Temporary droop
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.3
+- name: Tr
+  position: 6
+  type: Float64
+  description: Dashpot time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 5.0
+- name: Tf
+  position: 7
+  type: Float64
+  description: Filter time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.05
+- name: Tg
+  position: 8
+  type: Float64
+  description: Gate servo time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.5
+- name: VELM
+  position: 9
+  type: Float64
+  description: Maximum gate opening velocity
+  unit: pu/s
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.2
+- name: GMAX
+  position: 10
+  type: Float64
+  description: Maximum gate opening
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 1.0
+- name: GMIN
+  position: 11
+  type: Float64
+  description: Minimum gate opening
+  unit: pu
+  required: true
+  default: 0.0
+- name: Tw
+  position: 12
+  type: Float64
+  description: Water starting time
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 1.0
+- name: At
+  position: 13
+  type: Float64
+  description: Turbine gain
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 1.2
+- name: Dturb
+  position: 14
+  type: Float64
+  description: Turbine damping coefficient
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.5
+- name: qNL
+  position: 15
+  type: Float64
+  description: No-load turbine flow
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.08

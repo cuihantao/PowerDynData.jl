@@ -1,0 +1,225 @@
+model:
+  name: IEEEG1
+  description: IEEE Type 1 Speed-Governing Model
+  category: governor
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: true
+  line_count: 3
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Generator ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: K
+  position: 4
+  type: Float64
+  description: Gain (1/R) in machine base
+  unit: pu
+  required: true
+  range:
+  - 5.0
+  - 30.0
+  default: 20.0
+- name: T1
+  position: 5
+  type: Float64
+  description: Governor lag time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 5.0
+  default: 1.0
+- name: T2
+  position: 6
+  type: Float64
+  description: Governor lead time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 10.0
+  default: 1.0
+- name: T3
+  position: 7
+  type: Float64
+  description: Valve controller time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.04
+  - 1.0
+  default: 0.1
+- name: UO
+  position: 8
+  type: Float64
+  description: Maximum valve opening rate
+  unit: pu/sec
+  required: true
+  range:
+  - 0.01
+  - 0.3
+  default: 0.1
+- name: UC
+  position: 9
+  type: Float64
+  description: Maximum valve closing rate
+  unit: pu/sec
+  required: true
+  range:
+  - -0.3
+  - 0.0
+  default: -0.1
+- name: PMAX
+  position: 10
+  type: Float64
+  description: Maximum turbine power
+  unit: pu
+  required: true
+  range:
+  - 0.5
+  - 2.0
+  default: 5.0
+- name: PMIN
+  position: 11
+  type: Float64
+  description: Minimum turbine power
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 0.5
+  default: 0.0
+- name: T4
+  position: 12
+  type: Float64
+  description: Inlet piping/steam bowl time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 1.0
+  default: 0.4
+- name: K1
+  position: 13
+  type: Float64
+  description: Fraction of power from HP turbine
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 1.0
+  default: 0.5
+- name: K2
+  position: 14
+  type: Float64
+  description: Fraction of power from LP turbine
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.0
+- name: T5
+  position: 15
+  type: Float64
+  description: Time constant of 2nd boiler pass
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 10.0
+  default: 8.0
+- name: K3
+  position: 16
+  type: Float64
+  description: Fraction of HP shaft power after 2nd boiler pass
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 0.5
+  default: 0.5
+- name: K4
+  position: 17
+  type: Float64
+  description: Fraction of LP shaft power after 2nd boiler pass
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.0
+- name: T6
+  position: 18
+  type: Float64
+  description: Time constant of 3rd boiler pass
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 10.0
+  default: 0.5
+- name: K5
+  position: 19
+  type: Float64
+  description: Fraction of HP shaft power after 3rd boiler pass
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 0.35
+  default: 0.0
+- name: K6
+  position: 20
+  type: Float64
+  description: Fraction of LP shaft power after 3rd boiler pass
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 0.55
+  default: 0.0
+- name: T7
+  position: 21
+  type: Float64
+  description: Time constant of 4th boiler pass
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 10.0
+  default: 0.05
+- name: K7
+  position: 22
+  type: Float64
+  description: Fraction of HP shaft power after 4th boiler pass
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 0.3
+  default: 0.0
+- name: K8
+  position: 23
+  type: Float64
+  description: Fraction of LP shaft power after 4th boiler pass
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 0.3
+  default: 0.0

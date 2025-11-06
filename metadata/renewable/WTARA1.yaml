@@ -1,0 +1,39 @@
+model:
+  name: WTARA1
+  description: Wind turbine aerodynamics model
+  category: renewable_aerodynamics
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: false
+  line_count: 1
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Renewable governor ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: Ka
+  position: 4
+  type: Float64
+  description: Aerodynamics gain
+  unit: pu/deg
+  required: true
+  default: 1.0
+- name: theta0
+  position: 5
+  type: Float64
+  description: Initial pitch angle
+  unit: degrees
+  required: true
+  default: 0.0

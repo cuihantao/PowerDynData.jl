@@ -1,0 +1,39 @@
+model:
+  name: IEEEVC
+  description: IEEE Voltage Compensator
+  category: voltage_compensator
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: false
+  line_count: 1
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Exciter ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: rc
+  position: 4
+  type: Float64
+  description: Active compensation degree
+  unit: pu
+  required: true
+  default: 0.0
+- name: xc
+  position: 5
+  type: Float64
+  description: Reactive compensation degree
+  unit: pu
+  required: true
+  default: 0.0

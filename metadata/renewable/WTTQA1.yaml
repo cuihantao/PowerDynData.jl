@@ -1,0 +1,142 @@
+model:
+  name: WTTQA1
+  description: Wind turbine generator torque (Pref) model
+  category: renewable_torque
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: true
+  line_count: 2
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Renewable pitch controller ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: Tflag
+  position: 4
+  type: Int
+  description: Tflag (1-power error, 0-speed error)
+  unit: dimensionless
+  required: true
+- name: Kip
+  position: 5
+  type: Float64
+  description: Pref-control integral gain
+  unit: pu
+  required: true
+  default: 0.1
+- name: Kpp
+  position: 6
+  type: Float64
+  description: Pref-control proportional gain
+  unit: pu
+  required: true
+  default: 0.0
+- name: Tp
+  position: 7
+  type: Float64
+  description: Pe sensing time constant
+  unit: seconds
+  required: true
+  default: 0.05
+- name: Twref
+  position: 8
+  type: Float64
+  description: Speed reference time constant
+  unit: seconds
+  required: true
+  range:
+  - 30.0
+  - 60.0
+  default: 30.0
+- name: Temax
+  position: 9
+  type: Float64
+  description: Maximum electric torque
+  unit: pu
+  required: true
+  range:
+  - 1.1
+  - 1.2
+  default: 1.2
+- name: Temin
+  position: 10
+  type: Float64
+  description: Minimum electric torque
+  unit: pu
+  required: true
+  default: 0.0
+- name: p1
+  position: 11
+  type: Float64
+  description: Active power point 1
+  unit: pu
+  required: true
+  default: 0.2
+- name: sp1
+  position: 12
+  type: Float64
+  description: Speed at power point 1
+  unit: pu
+  required: true
+  default: 0.58
+- name: p2
+  position: 13
+  type: Float64
+  description: Active power point 2
+  unit: pu
+  required: true
+  default: 0.4
+- name: sp2
+  position: 14
+  type: Float64
+  description: Speed at power point 2
+  unit: pu
+  required: true
+  default: 0.72
+- name: p3
+  position: 15
+  type: Float64
+  description: Active power point 3
+  unit: pu
+  required: true
+  default: 0.6
+- name: sp3
+  position: 16
+  type: Float64
+  description: Speed at power point 3
+  unit: pu
+  required: true
+  default: 0.86
+- name: p4
+  position: 17
+  type: Float64
+  description: Active power point 4
+  unit: pu
+  required: true
+  default: 0.8
+- name: sp4
+  position: 18
+  type: Float64
+  description: Speed at power point 4
+  unit: pu
+  required: true
+  default: 1.0
+- name: Tn
+  position: 19
+  type: Float64
+  description: Turbine rating
+  unit: MVA
+  required: false
+  default: 0.0

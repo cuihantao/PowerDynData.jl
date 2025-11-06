@@ -1,0 +1,135 @@
+model:
+  name: IEESGO
+  description: IEEE Standard Governor
+  category: governor
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: true
+  line_count: 2
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Generator ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: T1
+  position: 4
+  type: Float64
+  description: Controller lag time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 100.0
+  default: 0.02
+- name: T2
+  position: 5
+  type: Float64
+  description: Lead compensation time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 10.0
+  default: 1.0
+- name: T3
+  position: 6
+  type: Float64
+  description: Governor lag time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.04
+  - 1.0
+  default: 1.0
+- name: T4
+  position: 7
+  type: Float64
+  description: Steam inlet delay
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 1.0
+  default: 0.5
+- name: T5
+  position: 8
+  type: Float64
+  description: Reheater delay
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 50.0
+  default: 10.0
+- name: T6
+  position: 9
+  type: Float64
+  description: Crossover delay
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 1.0
+  default: 0.5
+- name: K1
+  position: 10
+  type: Float64
+  description: 1/pu regulation (inverse droop)
+  unit: pu
+  required: true
+  range:
+  - 5.0
+  - 30.0
+  default: 0.02
+- name: K2
+  position: 11
+  type: Float64
+  description: Fraction K2
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 3.0
+  default: 1.0
+- name: K3
+  position: 12
+  type: Float64
+  description: Fraction K3
+  unit: pu
+  required: true
+  range:
+  - -1.0
+  - 1.0
+  default: 1.0
+- name: PMAX
+  position: 13
+  type: Float64
+  description: Maximum turbine power
+  unit: pu
+  required: true
+  range:
+  - 0.5
+  - 1.5
+  default: 5.0
+- name: PMIN
+  position: 14
+  type: Float64
+  description: Minimum turbine power
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 0.5
+  default: 0.0

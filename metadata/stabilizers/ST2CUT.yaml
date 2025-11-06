@@ -1,0 +1,198 @@
+model:
+  name: ST2CUT
+  description: Dual-input Power System Stabilizer
+  category: stabilizer
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: true
+  line_count: 2
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Generator ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: MODE
+  position: 4
+  type: Int
+  description: Input signal 1 mode (0-6)
+  unit: dimensionless
+  required: true
+- name: MODE2
+  position: 5
+  type: Int
+  description: Input signal 2 mode (0-6)
+  unit: dimensionless
+  required: true
+  default: 0
+- name: K1
+  position: 6
+  type: Float64
+  description: Transducer 1 gain
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 10.0
+  default: 1.0
+- name: K2
+  position: 7
+  type: Float64
+  description: Transducer 2 gain
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 10.0
+  default: 1.0
+- name: T1
+  position: 8
+  type: Float64
+  description: Transducer 1 time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 10.0
+  default: 1.0
+- name: T2
+  position: 9
+  type: Float64
+  description: Transducer 2 time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 10.0
+  default: 1.0
+- name: T3
+  position: 10
+  type: Float64
+  description: Washout integrator time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 10.0
+  default: 1.0
+- name: T4
+  position: 11
+  type: Float64
+  description: Washout delay time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.05
+  - 10.0
+  default: 0.2
+- name: T5
+  position: 12
+  type: Float64
+  description: Leadlag 1 time constant (zero)
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 10.0
+  default: 1.0
+- name: T6
+  position: 13
+  type: Float64
+  description: Leadlag 1 time constant (pole)
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 2.0
+  default: 0.5
+- name: T7
+  position: 14
+  type: Float64
+  description: Leadlag 2 time constant (zero)
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 10.0
+  default: 1.0
+- name: T8
+  position: 15
+  type: Float64
+  description: Leadlag 2 time constant (pole)
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 10.0
+  default: 1.0
+- name: T9
+  position: 16
+  type: Float64
+  description: Leadlag 3 time constant (zero)
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 2.0
+  default: 1.0
+- name: T10
+  position: 17
+  type: Float64
+  description: Leadlag 3 time constant (pole)
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 2.0
+  default: 0.2
+- name: LSMAX
+  position: 18
+  type: Float64
+  description: Maximum output limit
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 0.3
+  default: 0.3
+- name: LSMIN
+  position: 19
+  type: Float64
+  description: Minimum output limit
+  unit: pu
+  required: true
+  range:
+  - -0.3
+  - 0.0
+  default: -0.3
+- name: VCU
+  position: 20
+  type: Float64
+  description: Upper enabling bus voltage
+  unit: pu
+  required: true
+  range:
+  - 1.0
+  - 1.2
+  default: 999.0
+- name: VCL
+  position: 21
+  type: Float64
+  description: Lower enabling bus voltage
+  unit: pu
+  required: true
+  range:
+  - -0.1
+  - 1.0
+  default: -999.0

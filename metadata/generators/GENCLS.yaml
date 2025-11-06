@@ -1,0 +1,45 @@
+model:
+  name: GENCLS
+  description: Classical generator model (constant voltage behind transient reactance)
+  category: generator
+  version: 33
+
+parsing:
+  model_name_field: 2           # Field position of model name (1-indexed)
+  multi_line: false             # Single line model
+  line_count: 1                 # Number of lines for this model
+  terminator: "/"              # End-of-record marker
+  flexible_fields: false
+
+fields:
+  - name: BUS
+    position: 1
+    type: Int
+    description: "Bus number where generator is connected"
+    unit: dimensionless
+    required: true
+
+  - name: ID
+    position: 3
+    type: String
+    description: "Generator identifier (1-2 characters)"
+    unit: dimensionless
+    required: true
+    default: "1"
+
+  - name: H
+    position: 4
+    type: Float64
+    description: "Inertia constant (stored as M = 2H internally)"
+    unit: "MW·s/MVA"
+    required: true
+    range: [0.0, Inf]
+
+  - name: D
+    position: 5
+    type: Float64
+    description: "Damping coefficient"
+    unit: pu
+    required: true
+    range: [0.0, Inf]
+    default: 0.0

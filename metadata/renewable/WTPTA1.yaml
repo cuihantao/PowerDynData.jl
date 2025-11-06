@@ -1,0 +1,104 @@
+model:
+  name: WTPTA1
+  description: Wind turbine pitch control model
+  category: renewable_pitch
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: true
+  line_count: 2
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Renewable aerodynamics model ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: Kiw
+  position: 4
+  type: Float64
+  description: Pitch-control integral gain
+  unit: pu
+  required: true
+  default: 0.1
+- name: Kpw
+  position: 5
+  type: Float64
+  description: Pitch-control proportional gain
+  unit: pu
+  required: true
+  default: 0.0
+- name: Kic
+  position: 6
+  type: Float64
+  description: Pitch-compensation integral gain
+  unit: pu
+  required: true
+  default: 0.1
+- name: Kpc
+  position: 7
+  type: Float64
+  description: Pitch-compensation proportional gain
+  unit: pu
+  required: true
+  default: 0.0
+- name: Kcc
+  position: 8
+  type: Float64
+  description: Gain for power difference
+  unit: pu
+  required: true
+  default: 0.0
+- name: Tp
+  position: 9
+  type: Float64
+  description: Blade response time constant
+  unit: seconds
+  required: true
+  default: 0.3
+- name: thmax
+  position: 10
+  type: Float64
+  description: Maximum pitch angle
+  unit: degrees
+  required: true
+  range:
+  - 27.0
+  - 30.0
+  default: 30.0
+- name: thmin
+  position: 11
+  type: Float64
+  description: Minimum pitch angle
+  unit: degrees
+  required: true
+  default: 0.0
+- name: dthmax
+  position: 12
+  type: Float64
+  description: Maximum pitch angle rate
+  unit: degrees/s
+  required: true
+  range:
+  - 5.0
+  - 10.0
+  default: 5.0
+- name: dthmin
+  position: 13
+  type: Float64
+  description: Minimum pitch angle rate
+  unit: degrees/s
+  required: true
+  range:
+  - -10.0
+  - -5.0
+  default: -5.0

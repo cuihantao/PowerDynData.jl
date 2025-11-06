@@ -1,0 +1,141 @@
+model:
+  name: IEEET1
+  description: IEEE Type 1 excitation system
+  category: exciter
+  version: 33
+
+parsing:
+  model_name_field: 2
+  multi_line: true
+  line_count: 2
+  terminator: "/"
+  flexible_fields: false
+
+fields:
+  - name: BUS
+    position: 1
+    type: Int
+    description: "Bus number where generator is connected"
+    unit: dimensionless
+    required: true
+
+  - name: ID
+    position: 3
+    type: String
+    description: "Generator identifier (1-2 characters)"
+    unit: dimensionless
+    required: true
+    default: "1"
+
+  - name: TR
+    position: 4
+    type: Float64
+    description: "Sensing time constant"
+    unit: seconds
+    required: true
+    default: 0.02
+
+  - name: KA
+    position: 5
+    type: Float64
+    description: "Regulator gain"
+    unit: pu
+    required: true
+    default: 5.0
+
+  - name: TA
+    position: 6
+    type: Float64
+    description: "Lag time constant in anti-windup lag"
+    unit: seconds
+    required: true
+    default: 0.04
+
+  - name: VRMAX
+    position: 7
+    type: Float64
+    description: "Maximum excitation limit"
+    unit: pu
+    required: true
+    default: 7.3
+
+  - name: VRMIN
+    position: 8
+    type: Float64
+    description: "Minimum excitation limit"
+    unit: pu
+    required: true
+    default: -7.3
+
+  - name: KE
+    position: 9
+    type: Float64
+    description: "Gain added to saturation"
+    unit: pu
+    required: true
+    default: 1.0
+
+  - name: TE
+    position: 10
+    type: Float64
+    description: "Exciter integrator time constant"
+    unit: seconds
+    required: true
+    default: 0.8
+
+  - name: KF
+    position: 11
+    type: Float64
+    description: "Feedback gain"
+    unit: pu
+    required: true
+    default: 0.1
+
+  - name: TF
+    position: 12
+    type: Float64
+    description: "Feedback time constant"
+    unit: seconds
+    required: true
+    range: [0.0, Inf]
+    default: 1.0
+
+  - name: Switch
+    position: 13
+    type: Float64
+    description: "Switch parameter (unused in PSS/E)"
+    unit: dimensionless
+    required: true
+    default: 0.0
+
+  - name: E1
+    position: 14
+    type: Float64
+    description: "First saturation point"
+    unit: pu
+    required: true
+    default: 0.0
+
+  - name: SE1
+    position: 15
+    type: Float64
+    description: "Saturation value at first point"
+    unit: pu
+    required: true
+    default: 0.0
+
+  - name: E2
+    position: 16
+    type: Float64
+    description: "Second saturation point"
+    unit: pu
+    required: true
+    default: 1.0
+
+  - name: SE2
+    position: 17
+    type: Float64
+    description: "Saturation value at second point"
+    unit: pu
+    required: true
+    default: 1.0

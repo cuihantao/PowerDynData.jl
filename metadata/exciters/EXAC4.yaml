@@ -1,0 +1,95 @@
+model:
+  name: EXAC4
+  description: Exciter AC4 model
+  category: exciter
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: false
+  line_count: 1
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Generator ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: TR
+  position: 4
+  type: Float64
+  description: Sensing time constant
+  unit: seconds
+  required: true
+  default: 0.01
+- name: VIMAX
+  position: 5
+  type: Float64
+  description: Maximum input voltage
+  unit: pu
+  required: true
+  default: 10.0
+- name: VIMIN
+  position: 6
+  type: Float64
+  description: Minimum input voltage
+  unit: pu
+  required: true
+  default: -10.0
+- name: TC
+  position: 7
+  type: Float64
+  description: Lead time constant
+  unit: seconds
+  required: true
+  default: 1.0
+- name: TB
+  position: 8
+  type: Float64
+  description: Lag time constant
+  unit: seconds
+  required: true
+  default: 1.0
+- name: KA
+  position: 9
+  type: Float64
+  description: Regulator gain
+  unit: pu
+  required: true
+  default: 80.0
+- name: TA
+  position: 10
+  type: Float64
+  description: Regulator time constant
+  unit: seconds
+  required: true
+  default: 0.04
+- name: VRMAX
+  position: 11
+  type: Float64
+  description: Maximum regulator output
+  unit: pu
+  required: true
+  default: 8.0
+- name: VRMIN
+  position: 12
+  type: Float64
+  description: Minimum regulator output
+  unit: pu
+  required: true
+  default: 0.0
+- name: KC
+  position: 13
+  type: Float64
+  description: Rectifier loading factor
+  unit: pu
+  required: true
+  default: 0.1

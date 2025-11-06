@@ -1,0 +1,196 @@
+model:
+  name: AC8B
+  description: AC8B exciter model with PID controller
+  category: exciter
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: true
+  line_count: 3
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number where generator is connected
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Generator identifier (1-2 characters)
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: TR
+  position: 4
+  type: Float64
+  description: Sensing time constant
+  unit: seconds
+  required: true
+  default: 0.01
+- name: kP
+  position: 5
+  type: Float64
+  description: PID proportional coefficient
+  unit: pu
+  required: true
+  range:
+  - 10.0
+  - 500.0
+  default: 10.0
+- name: kI
+  position: 6
+  type: Float64
+  description: PID integrative coefficient
+  unit: pu
+  required: true
+  range:
+  - 10.0
+  - 500.0
+  default: 10.0
+- name: kD
+  position: 7
+  type: Float64
+  description: PID derivative coefficient
+  unit: pu
+  required: true
+  range:
+  - 10.0
+  - 500.0
+  default: 10.0
+- name: Td
+  position: 8
+  type: Float64
+  description: PID derivative time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 0.5
+  default: 0.2
+- name: VPMAX
+  position: 9
+  type: Float64
+  description: PID maximum limit
+  unit: pu
+  required: true
+  default: 999.0
+- name: VPMIN
+  position: 10
+  type: Float64
+  description: PID minimum limit
+  unit: pu
+  required: true
+  default: -999.0
+- name: VRMAX
+  position: 11
+  type: Float64
+  description: Maximum regulator limit
+  unit: pu
+  required: true
+  range:
+  - 1.0
+  - 10.0
+  default: 7.3
+- name: VRMIN
+  position: 12
+  type: Float64
+  description: Minimum regulator limit
+  unit: pu
+  required: true
+  range:
+  - -1.0
+  - 1.5
+  default: 1.0
+- name: VFEMAX
+  position: 13
+  type: Float64
+  description: Exciter field current limit
+  unit: pu
+  required: true
+  default: 999.0
+- name: VEMIN
+  position: 14
+  type: Float64
+  description: Minimum exciter voltage output
+  unit: pu
+  required: true
+  default: -999.0
+- name: TA
+  position: 15
+  type: Float64
+  description: Lag time constant in anti-windup lag
+  unit: seconds
+  required: true
+  default: 0.04
+- name: KA
+  position: 16
+  type: Float64
+  description: Gain in anti-windup lag
+  unit: pu
+  required: true
+  default: 40.0
+- name: TE
+  position: 17
+  type: Float64
+  description: Exciter integrator time constant
+  unit: seconds
+  required: true
+  default: 0.8
+- name: KC
+  position: 18
+  type: Float64
+  description: Rectifier loading factor proportional to commutating reactance
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 1.0
+  default: 0.1
+- name: KD
+  position: 19
+  type: Float64
+  description: Ifd feedback gain
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 1.0
+  default: 0.0
+- name: KE
+  position: 20
+  type: Float64
+  description: Gain added to saturation
+  unit: pu
+  required: true
+  default: 1.0
+- name: E1
+  position: 21
+  type: Float64
+  description: First saturation point
+  unit: pu
+  required: true
+  default: 0.0
+- name: SE1
+  position: 22
+  type: Float64
+  description: Value at first saturation point
+  unit: pu
+  required: true
+  default: 0.0
+- name: E2
+  position: 23
+  type: Float64
+  description: Second saturation point
+  unit: pu
+  required: true
+  default: 1.0
+- name: SE2
+  position: 24
+  type: Float64
+  description: Value at second saturation point
+  unit: pu
+  required: true
+  default: 1.0

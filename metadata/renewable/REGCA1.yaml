@@ -1,0 +1,154 @@
+model:
+  name: REGCA1
+  description: Renewable energy generator (converter) model A
+  category: renewable_converter
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: true
+  line_count: 2
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number (interface bus)
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Static generator ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: Sn
+  position: 4
+  type: Float64
+  description: Model MVA base
+  unit: MVA
+  required: true
+  default: 100.0
+- name: Tg
+  position: 5
+  type: Float64
+  description: Converter time constant
+  unit: seconds
+  required: true
+  default: 0.1
+- name: Rrpwr
+  position: 6
+  type: Float64
+  description: Low voltage power logic (LVPL) ramp limit
+  unit: pu
+  required: true
+  default: 10.0
+- name: Brkpt
+  position: 7
+  type: Float64
+  description: LVPL characteristic voltage 2
+  unit: pu
+  required: true
+  default: 1.0
+- name: Zerox
+  position: 8
+  type: Float64
+  description: LVPL characteristic voltage 1
+  unit: pu
+  required: true
+  default: 0.5
+- name: Lvplsw
+  position: 9
+  type: Float64
+  description: Low voltage P logic (1-enable, 0-disable)
+  unit: dimensionless
+  required: true
+  default: 1.0
+- name: Lvpl1
+  position: 10
+  type: Float64
+  description: LVPL gain at Brkpt
+  unit: pu
+  required: true
+  default: 1.0
+- name: Volim
+  position: 11
+  type: Float64
+  description: Voltage limit for high voltage reactive current management
+  unit: pu
+  required: true
+  default: 1.2
+- name: Lvpnt1
+  position: 12
+  type: Float64
+  description: High voltage point for low voltage active current management
+  unit: pu
+  required: true
+  default: 0.8
+- name: Lvpnt0
+  position: 13
+  type: Float64
+  description: Low voltage point for low voltage active current management
+  unit: pu
+  required: true
+  default: 0.4
+- name: Iolim
+  position: 14
+  type: Float64
+  description: Lower current limit for high voltage reactive current management
+  unit: pu
+  required: true
+  default: -1.5
+- name: Tfltr
+  position: 15
+  type: Float64
+  description: Voltage filter time constant for low voltage active current management
+  unit: seconds
+  required: true
+  default: 0.1
+- name: Khv
+  position: 16
+  type: Float64
+  description: Overvoltage compensation gain in high voltage reactive current management
+  unit: pu
+  required: true
+  default: 0.7
+- name: Iqrmax
+  position: 17
+  type: Float64
+  description: Upper limit on the rate of change for reactive current
+  unit: pu
+  required: true
+  default: 1.0
+- name: Iqrmin
+  position: 18
+  type: Float64
+  description: Lower limit on the rate of change for reactive current
+  unit: pu
+  required: true
+  default: -1.0
+- name: Accel
+  position: 19
+  type: Float64
+  description: Acceleration factor
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 1.0
+  default: 0.0
+- name: gammap
+  position: 20
+  type: Float64
+  description: P ratio of linked static generator
+  unit: pu
+  required: true
+  default: 1.0
+- name: gammaq
+  position: 21
+  type: Float64
+  description: Q ratio of linked static generator
+  unit: pu
+  required: true
+  default: 1.0

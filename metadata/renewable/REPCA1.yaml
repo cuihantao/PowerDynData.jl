@@ -1,0 +1,239 @@
+model:
+  name: REPCA1
+  description: Renewable Energy Plant Control model
+  category: renewable_plant
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: true
+  line_count: 3
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: RenExciter ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: VCFlag
+  position: 4
+  type: Int
+  description: Droop flag (0-droop with PF ctrl, 1-line drop comp)
+  unit: dimensionless
+  required: true
+- name: RefFlag
+  position: 5
+  type: Int
+  description: Q/V select flag (0-Q control, 1-V control)
+  unit: dimensionless
+  required: true
+- name: Fflag
+  position: 6
+  type: Int
+  description: Frequency control flag (0-disable, 1-enable)
+  unit: dimensionless
+  required: true
+- name: PLflag
+  position: 7
+  type: Int
+  description: Pline control flag (0-disable, 1-enable)
+  unit: dimensionless
+  required: true
+  default: 1
+- name: Tfltr
+  position: 8
+  type: Float64
+  description: V or Q filter time constant
+  unit: seconds
+  required: true
+  default: 0.02
+- name: Kp
+  position: 9
+  type: Float64
+  description: Q proportional gain
+  unit: pu
+  required: true
+  default: 1.0
+- name: Ki
+  position: 10
+  type: Float64
+  description: Q integral gain
+  unit: pu
+  required: true
+  default: 0.1
+- name: Tft
+  position: 11
+  type: Float64
+  description: Lead time constant
+  unit: seconds
+  required: true
+  default: 1.0
+- name: Tfv
+  position: 12
+  type: Float64
+  description: Lag time constant
+  unit: seconds
+  required: true
+  default: 1.0
+- name: Vfrz
+  position: 13
+  type: Float64
+  description: Voltage below which s2 is frozen
+  unit: pu
+  required: true
+  default: 0.8
+- name: Rc
+  position: 14
+  type: Float64
+  description: Line drop compensation R
+  unit: pu
+  required: false
+  default: 0.0
+- name: Xc
+  position: 15
+  type: Float64
+  description: Line drop compensation X
+  unit: pu
+  required: false
+  default: 0.0
+- name: Kc
+  position: 16
+  type: Float64
+  description: Reactive power compensation gain
+  unit: pu
+  required: true
+  default: 0.0
+- name: emax
+  position: 17
+  type: Float64
+  description: Upper limit on deadband output
+  unit: pu
+  required: true
+  default: 999.0
+- name: emin
+  position: 18
+  type: Float64
+  description: Lower limit on deadband output
+  unit: pu
+  required: true
+  default: -999.0
+- name: dbd1
+  position: 19
+  type: Float64
+  description: Lower threshold for reactive power control deadband
+  unit: pu
+  required: true
+  default: -0.1
+- name: dbd2
+  position: 20
+  type: Float64
+  description: Upper threshold for reactive power control deadband
+  unit: pu
+  required: true
+  default: 0.1
+- name: Qmax
+  position: 21
+  type: Float64
+  description: Upper limit on output of V-Q control
+  unit: pu
+  required: true
+  default: 999.0
+- name: Qmin
+  position: 22
+  type: Float64
+  description: Lower limit on output of V-Q control
+  unit: pu
+  required: true
+  default: -999.0
+- name: Kpg
+  position: 23
+  type: Float64
+  description: Proportional gain for power control
+  unit: pu
+  required: true
+  default: 1.0
+- name: Kig
+  position: 24
+  type: Float64
+  description: Integral gain for power control
+  unit: pu
+  required: true
+  default: 0.1
+- name: Tp
+  position: 25
+  type: Float64
+  description: Time constant for P measurement
+  unit: seconds
+  required: true
+  default: 0.02
+- name: fdbd1
+  position: 26
+  type: Float64
+  description: Lower threshold for frequency error deadband
+  unit: pu
+  required: true
+  default: -0.0002833
+- name: fdbd2
+  position: 27
+  type: Float64
+  description: Upper threshold for frequency error deadband
+  unit: pu
+  required: true
+  default: 0.0002833
+- name: femax
+  position: 28
+  type: Float64
+  description: Upper limit for frequency error
+  unit: pu
+  required: true
+  default: 0.05
+- name: femin
+  position: 29
+  type: Float64
+  description: Lower limit for frequency error
+  unit: pu
+  required: true
+  default: -0.05
+- name: Pmax
+  position: 30
+  type: Float64
+  description: Upper limit on power error
+  unit: pu
+  required: true
+  default: 999.0
+- name: Pmin
+  position: 31
+  type: Float64
+  description: Lower limit on power error
+  unit: pu
+  required: true
+  default: -999.0
+- name: Tg
+  position: 32
+  type: Float64
+  description: Power controller lag time constant
+  unit: seconds
+  required: true
+  default: 0.02
+- name: Ddn
+  position: 33
+  type: Float64
+  description: Reciprocal of droop for over-frequency conditions
+  unit: pu
+  required: true
+  default: 10.0
+- name: Dup
+  position: 34
+  type: Float64
+  description: Reciprocal of droop for under-frequency conditions
+  unit: pu
+  required: true
+  default: 10.0

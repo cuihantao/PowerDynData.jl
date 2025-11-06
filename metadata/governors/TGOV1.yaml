@@ -1,0 +1,82 @@
+model:
+  name: TGOV1
+  description: Steam turbine governor model
+  category: governor
+  version: 33
+
+parsing:
+  model_name_field: 2
+  multi_line: false
+  terminator: "/"
+  flexible_fields: false
+
+fields:
+  - name: BUS
+    position: 1
+    type: Int
+    description: "Bus number"
+    unit: dimensionless
+    required: true
+
+  - name: ID
+    position: 3
+    type: String
+    description: "Generator identifier"
+    unit: dimensionless
+    required: true
+    default: "1"
+
+  - name: R
+    position: 4
+    type: Float64
+    description: "Permanent droop"
+    unit: pu
+    required: true
+    range: [0.0, Inf]
+
+  - name: Dt
+    position: 5
+    type: Float64
+    description: "Turbine damping coefficient"
+    unit: pu
+    required: true
+    range: [0.0, Inf]
+
+  - name: Vmax
+    position: 6
+    type: Float64
+    description: "Maximum valve position"
+    unit: pu
+    required: true
+    range: [0.0, Inf]
+
+  - name: Vmin
+    position: 7
+    type: Float64
+    description: "Minimum valve position"
+    unit: pu
+    required: true
+
+  - name: T1
+    position: 8
+    type: Float64
+    description: "Governor time constant"
+    unit: seconds
+    required: true
+    range: [0.0, Inf]
+
+  - name: T2
+    position: 9
+    type: Float64
+    description: "Turbine time constant"
+    unit: seconds
+    required: true
+    range: [0.0, Inf]
+
+  - name: T3
+    position: 10
+    type: Float64
+    description: "Valve positioner time constant"
+    unit: seconds
+    required: true
+    range: [0.0, Inf]

@@ -1,0 +1,70 @@
+model:
+  name: WTDTA1
+  description: Wind turbine drive-train model
+  category: renewable_governor
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: false
+  line_count: 1
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Renewable exciter ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: H
+  position: 4
+  type: Float64
+  description: Total inertia constant
+  unit: MWs/MVA
+  required: true
+  default: 3.0
+- name: DAMP
+  position: 5
+  type: Float64
+  description: Damping coefficient
+  unit: pu
+  required: true
+  default: 0.0
+- name: Htfrac
+  position: 6
+  type: Float64
+  description: Turbine inertia fraction (Hturb/H)
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 1.0
+  default: 0.5
+- name: Freq1
+  position: 7
+  type: Float64
+  description: First shaft torsional resonant frequency
+  unit: pu
+  required: true
+  default: 1.0
+- name: Dshaft
+  position: 8
+  type: Float64
+  description: Shaft damping factor
+  unit: pu
+  required: true
+  default: 1.0
+- name: w0
+  position: 9
+  type: Float64
+  description: Default speed if not using torque model
+  unit: pu
+  required: true
+  default: 1.0

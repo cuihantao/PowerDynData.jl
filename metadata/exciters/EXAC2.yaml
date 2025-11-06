@@ -1,0 +1,186 @@
+model:
+  name: EXAC2
+  description: Exciter AC2 model
+  category: exciter
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: true
+  line_count: 3
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Generator ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: TR
+  position: 4
+  type: Float64
+  description: Sensing time constant
+  unit: seconds
+  required: true
+  default: 0.01
+- name: TB
+  position: 5
+  type: Float64
+  description: Lag time constant
+  unit: seconds
+  required: true
+  default: 1.0
+- name: TC
+  position: 6
+  type: Float64
+  description: Lead time constant
+  unit: seconds
+  required: true
+  default: 1.0
+- name: KA
+  position: 7
+  type: Float64
+  description: Regulator gain
+  unit: pu
+  required: true
+  default: 80.0
+- name: TA
+  position: 8
+  type: Float64
+  description: Regulator time constant
+  unit: seconds
+  required: true
+  default: 0.04
+- name: VAMAX
+  position: 9
+  type: Float64
+  description: Maximum amplifier output
+  unit: pu
+  required: true
+  default: 999.0
+- name: VAMIN
+  position: 10
+  type: Float64
+  description: Minimum amplifier output
+  unit: pu
+  required: true
+  default: -999.0
+- name: KB
+  position: 11
+  type: Float64
+  description: Second stage gain
+  unit: pu
+  required: true
+  default: 1.0
+- name: VRMAX
+  position: 12
+  type: Float64
+  description: Maximum regulator output
+  unit: pu
+  required: true
+  default: 8.0
+- name: VRMIN
+  position: 13
+  type: Float64
+  description: Minimum regulator output
+  unit: pu
+  required: true
+  default: 0.0
+- name: TE
+  position: 14
+  type: Float64
+  description: Exciter time constant
+  unit: seconds
+  required: true
+  default: 0.8
+- name: KL
+  position: 15
+  type: Float64
+  description: Exciter field current limiter gain
+  unit: pu
+  required: true
+  default: 1.0
+- name: KH
+  position: 16
+  type: Float64
+  description: Exciter field current feedback gain
+  unit: pu
+  required: true
+  default: 1.0
+- name: KF
+  position: 17
+  type: Float64
+  description: Feedback gain
+  unit: pu
+  required: true
+  default: 0.1
+- name: TF
+  position: 18
+  type: Float64
+  description: Feedback time constant
+  unit: seconds
+  required: true
+  default: 1.0
+- name: KC
+  position: 19
+  type: Float64
+  description: Rectifier loading factor
+  unit: pu
+  required: true
+  default: 0.1
+- name: KD
+  position: 20
+  type: Float64
+  description: Demagnetizing factor
+  unit: pu
+  required: true
+  default: 0.0
+- name: KE
+  position: 21
+  type: Float64
+  description: Exciter constant
+  unit: pu
+  required: true
+  default: 1.0
+- name: VLR
+  position: 22
+  type: Float64
+  description: Maximum field current limiter reference
+  unit: pu
+  required: true
+  default: 1.0
+- name: E1
+  position: 23
+  type: Float64
+  description: First saturation point
+  unit: pu
+  required: true
+  default: 0.0
+- name: SE1
+  position: 24
+  type: Float64
+  description: Saturation at E1
+  unit: pu
+  required: true
+  default: 0.0
+- name: E2
+  position: 25
+  type: Float64
+  description: Second saturation point
+  unit: pu
+  required: true
+  default: 1.0
+- name: SE2
+  position: 26
+  type: Float64
+  description: Saturation at E2
+  unit: pu
+  required: true
+  default: 1.0

@@ -1,0 +1,373 @@
+model:
+  name: REECA1
+  description: Renewable energy electrical control model
+  category: renewable_electrical
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: true
+  line_count: 5
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Renewable generator ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: PFFLAG
+  position: 4
+  type: Int
+  description: Power factor control flag (1-PF control, 0-Q control)
+  unit: dimensionless
+  required: true
+- name: VFLAG
+  position: 5
+  type: Int
+  description: Voltage control flag (1-Q control, 0-V control)
+  unit: dimensionless
+  required: true
+- name: QFLAG
+  position: 6
+  type: Int
+  description: Q control flag (1-V or Q control, 0-const PF or Q)
+  unit: dimensionless
+  required: true
+- name: PFLAG
+  position: 7
+  type: Int
+  description: P speed-dependency flag (1-has speed dep, 0-no dep)
+  unit: dimensionless
+  required: true
+- name: PQFLAG
+  position: 8
+  type: Int
+  description: P/Q priority flag for I limit (0-Q priority, 1-P priority)
+  unit: dimensionless
+  required: true
+- name: Vdip
+  position: 9
+  type: Float64
+  description: Low V threshold to activate Iqinj logic
+  unit: pu
+  required: true
+  default: 0.8
+- name: Vup
+  position: 10
+  type: Float64
+  description: V threshold above which to activate Iqinj logic
+  unit: pu
+  required: true
+  default: 1.2
+- name: Trv
+  position: 11
+  type: Float64
+  description: Voltage filter time constant
+  unit: seconds
+  required: true
+  default: 0.02
+- name: dbd1
+  position: 12
+  type: Float64
+  description: Lower bound of voltage deadband
+  unit: pu
+  required: true
+  default: -0.02
+- name: dbd2
+  position: 13
+  type: Float64
+  description: Upper bound of voltage deadband
+  unit: pu
+  required: true
+  default: 0.02
+- name: Kqv
+  position: 14
+  type: Float64
+  description: Gain to compute Iqinj from V error
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 10.0
+  default: 1.0
+- name: Iqh1
+  position: 15
+  type: Float64
+  description: Upper limit on Iqinj
+  unit: pu
+  required: true
+  default: 999.0
+- name: Iql1
+  position: 16
+  type: Float64
+  description: Lower limit on Iqinj
+  unit: pu
+  required: true
+  default: -999.0
+- name: Vref0
+  position: 17
+  type: Float64
+  description: User defined Vref (if 0, use initial bus V)
+  unit: pu
+  required: true
+  default: 1.0
+- name: Iqfrz
+  position: 18
+  type: Float64
+  description: Hold Iqinj value for Thld seconds following Vdip
+  unit: pu
+  required: true
+  default: 0.0
+- name: Thld
+  position: 19
+  type: Float64
+  description: Time for which Iqinj is held
+  unit: seconds
+  required: true
+  default: 0.0
+- name: Thld2
+  position: 20
+  type: Float64
+  description: Time for which IPMAX is held after voltage dip ends
+  unit: seconds
+  required: true
+  default: 0.0
+- name: Tp
+  position: 21
+  type: Float64
+  description: Filter time constant for Pe
+  unit: seconds
+  required: true
+  default: 0.02
+- name: QMax
+  position: 22
+  type: Float64
+  description: Upper limit for reactive power regulator
+  unit: pu
+  required: true
+  default: 999.0
+- name: QMin
+  position: 23
+  type: Float64
+  description: Lower limit for reactive power regulator
+  unit: pu
+  required: true
+  default: -999.0
+- name: VMAX
+  position: 24
+  type: Float64
+  description: Upper limit for voltage control
+  unit: pu
+  required: true
+  default: 999.0
+- name: VMIN
+  position: 25
+  type: Float64
+  description: Lower limit for voltage control
+  unit: pu
+  required: true
+  default: -999.0
+- name: Kqp
+  position: 26
+  type: Float64
+  description: Proportional gain for reactive power error
+  unit: pu
+  required: true
+  default: 1.0
+- name: Kqi
+  position: 27
+  type: Float64
+  description: Integral gain for reactive power error
+  unit: pu
+  required: true
+  default: 0.1
+- name: Kvp
+  position: 28
+  type: Float64
+  description: Proportional gain for voltage error
+  unit: pu
+  required: true
+  default: 1.0
+- name: Kvi
+  position: 29
+  type: Float64
+  description: Integral gain for voltage error
+  unit: pu
+  required: true
+  default: 0.1
+- name: Vref1
+  position: 30
+  type: Float64
+  description: Voltage reference if VFLAG=0
+  unit: pu
+  required: true
+  default: 1.0
+- name: Tiq
+  position: 31
+  type: Float64
+  description: Filter time constant for Iq
+  unit: seconds
+  required: true
+  default: 0.02
+- name: dPmax
+  position: 32
+  type: Float64
+  description: Power reference maximum ramp rate
+  unit: pu/s
+  required: true
+  default: 999.0
+- name: dPmin
+  position: 33
+  type: Float64
+  description: Power reference minimum ramp rate
+  unit: pu/s
+  required: true
+  default: -999.0
+- name: PMAX
+  position: 34
+  type: Float64
+  description: Maximum active power limit
+  unit: pu
+  required: true
+  default: 999.0
+- name: PMIN
+  position: 35
+  type: Float64
+  description: Minimum active power limit
+  unit: pu
+  required: true
+  default: 0.0
+- name: Imax
+  position: 36
+  type: Float64
+  description: Maximum apparent current limit
+  unit: pu
+  required: true
+  default: 999.0
+- name: Tpord
+  position: 37
+  type: Float64
+  description: Filter time constant for power setpoint
+  unit: seconds
+  required: true
+  default: 0.02
+- name: Vq1
+  position: 38
+  type: Float64
+  description: Reactive power V-I pair voltage (point 1)
+  unit: pu
+  required: true
+  default: 0.2
+- name: Iq1
+  position: 39
+  type: Float64
+  description: Reactive power V-I pair current (point 1)
+  unit: pu
+  required: true
+  default: 2.0
+- name: Vq2
+  position: 40
+  type: Float64
+  description: Reactive power V-I pair voltage (point 2)
+  unit: pu
+  required: true
+  default: 0.4
+- name: Iq2
+  position: 41
+  type: Float64
+  description: Reactive power V-I pair current (point 2)
+  unit: pu
+  required: true
+  default: 4.0
+- name: Vq3
+  position: 42
+  type: Float64
+  description: Reactive power V-I pair voltage (point 3)
+  unit: pu
+  required: true
+  default: 0.8
+- name: Iq3
+  position: 43
+  type: Float64
+  description: Reactive power V-I pair current (point 3)
+  unit: pu
+  required: true
+  default: 8.0
+- name: Vq4
+  position: 44
+  type: Float64
+  description: Reactive power V-I pair voltage (point 4)
+  unit: pu
+  required: true
+  default: 1.0
+- name: Iq4
+  position: 45
+  type: Float64
+  description: Reactive power V-I pair current (point 4)
+  unit: pu
+  required: true
+  default: 10.0
+- name: Vp1
+  position: 46
+  type: Float64
+  description: Active power V-I pair voltage (point 1)
+  unit: pu
+  required: true
+  default: 0.2
+- name: Ip1
+  position: 47
+  type: Float64
+  description: Active power V-I pair current (point 1)
+  unit: pu
+  required: true
+  default: 2.0
+- name: Vp2
+  position: 48
+  type: Float64
+  description: Active power V-I pair voltage (point 2)
+  unit: pu
+  required: true
+  default: 0.4
+- name: Ip2
+  position: 49
+  type: Float64
+  description: Active power V-I pair current (point 2)
+  unit: pu
+  required: true
+  default: 4.0
+- name: Vp3
+  position: 50
+  type: Float64
+  description: Active power V-I pair voltage (point 3)
+  unit: pu
+  required: true
+  default: 0.8
+- name: Ip3
+  position: 51
+  type: Float64
+  description: Active power V-I pair current (point 3)
+  unit: pu
+  required: true
+  default: 8.0
+- name: Vp4
+  position: 52
+  type: Float64
+  description: Active power V-I pair voltage (point 4)
+  unit: pu
+  required: true
+  default: 1.0
+- name: Ip4
+  position: 53
+  type: Float64
+  description: Active power V-I pair current (point 4)
+  unit: pu
+  required: true
+  default: 12.0

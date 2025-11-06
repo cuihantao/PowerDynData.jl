@@ -1,0 +1,235 @@
+model:
+  name: ESST3A
+  description: Static exciter type 3A
+  category: exciter
+  version: 33
+parsing:
+  model_name_field: 2
+  multi_line: true
+  line_count: 3
+  terminator: /
+  flexible_fields: false
+fields:
+- name: BUS
+  position: 1
+  type: Int
+  description: Bus number
+  unit: dimensionless
+  required: true
+- name: ID
+  position: 3
+  type: String
+  description: Generator ID
+  unit: dimensionless
+  required: true
+  default: '1'
+- name: TR
+  position: 4
+  type: Float64
+  description: Sensing time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.01
+- name: VIMAX
+  position: 5
+  type: Float64
+  description: Maximum input voltage
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 1.0
+  default: 0.8
+- name: VIMIN
+  position: 6
+  type: Float64
+  description: Minimum input voltage
+  unit: pu
+  required: true
+  range:
+  - -1.0
+  - 0.0
+  default: -0.1
+- name: KM
+  position: 7
+  type: Float64
+  description: Forward gain constant
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 1000.0
+  default: 500.0
+- name: TC
+  position: 8
+  type: Float64
+  description: Lead time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 20.0
+  default: 3.0
+- name: TB
+  position: 9
+  type: Float64
+  description: Lag time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 20.0
+  default: 15.0
+- name: KA
+  position: 10
+  type: Float64
+  description: Regulator gain
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 200.0
+  default: 50.0
+- name: TA
+  position: 11
+  type: Float64
+  description: Regulator time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - 1.0
+  default: 0.1
+- name: VRMAX
+  position: 12
+  type: Float64
+  description: Maximum regulator output
+  unit: pu
+  required: true
+  range:
+  - 0.5
+  - 10.0
+  default: 8.0
+- name: VRMIN
+  position: 13
+  type: Float64
+  description: Minimum regulator output
+  unit: pu
+  required: true
+  range:
+  - -10.0
+  - 0.5
+  default: 0.0
+- name: KG
+  position: 14
+  type: Float64
+  description: Feedback gain of inner field regulator
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 1.1
+  default: 1.0
+- name: KP
+  position: 15
+  type: Float64
+  description: Potential circuit gain coefficient
+  unit: pu
+  required: true
+  range:
+  - 1.0
+  - 10.0
+  default: 4.0
+- name: KI
+  position: 16
+  type: Float64
+  description: Current circuit gain coefficient
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 1.1
+  default: 0.1
+- name: VBMAX
+  position: 17
+  type: Float64
+  description: Maximum VB limit
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 20.0
+  default: 18.0
+- name: KC
+  position: 18
+  type: Float64
+  description: Rectifier loading factor
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 1.0
+  default: 0.1
+- name: XL
+  position: 19
+  type: Float64
+  description: Potential source reactance
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 0.5
+  default: 0.01
+- name: VGMAX
+  position: 20
+  type: Float64
+  description: Maximum VG limit
+  unit: pu
+  required: true
+  range:
+  - 0.0
+  - 20.0
+  default: 4.0
+- name: THETAP
+  position: 21
+  type: Float64
+  description: Rectifier firing angle
+  unit: degrees
+  required: true
+  range:
+  - 0.0
+  - 90.0
+  default: 0.0
+- name: TM
+  position: 22
+  type: Float64
+  description: Inner field regulator time constant
+  unit: seconds
+  required: true
+  range:
+  - 0.0
+  - Inf
+  default: 0.1
+- name: VMMAX
+  position: 23
+  type: Float64
+  description: Maximum VM limit
+  unit: pu
+  required: true
+  range:
+  - 0.5
+  - 1.5
+  default: 1.0
+- name: VMMIN
+  position: 24
+  type: Float64
+  description: Minimum VM limit
+  unit: pu
+  required: true
+  range:
+  - -1.5
+  - 0.5
+  default: 0.1

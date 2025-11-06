@@ -1,0 +1,127 @@
+model:
+  name: GENSAL
+  description: Salient pole generator model with one q-axis damper winding
+  category: generator
+  version: 33
+
+parsing:
+  model_name_field: 2           # Field position of model name (1-indexed)
+  multi_line: true              # Spans multiple lines
+  line_count: 3                 # Number of lines for this model
+  terminator: "/"              # End-of-record marker
+  flexible_fields: false
+
+fields:
+  - name: BUS
+    position: 1
+    type: Int
+    description: "Bus number where generator is connected"
+    unit: dimensionless
+    required: true
+
+  - name: ID
+    position: 3
+    type: String
+    description: "Generator identifier (1-2 characters)"
+    unit: dimensionless
+    required: true
+    default: "1"
+
+  - name: Td10
+    position: 4
+    type: Float64
+    description: "d-axis transient open-circuit time constant"
+    unit: seconds
+    required: true
+    range: [0.0, Inf]
+
+  - name: Td20
+    position: 5
+    type: Float64
+    description: "d-axis subtransient open-circuit time constant"
+    unit: seconds
+    required: true
+    range: [0.0, Inf]
+
+  - name: Tq20
+    position: 6
+    type: Float64
+    description: "q-axis subtransient open-circuit time constant"
+    unit: seconds
+    required: true
+    range: [0.0, Inf]
+
+  - name: H
+    position: 7
+    type: Float64
+    description: "Inertia constant"
+    unit: "MW·s/MVA"
+    required: true
+    range: [0.0, Inf]
+
+  - name: D
+    position: 8
+    type: Float64
+    description: "Damping coefficient"
+    unit: pu
+    required: true
+    range: [0.0, Inf]
+    default: 0.0
+
+  - name: Xd
+    position: 9
+    type: Float64
+    description: "d-axis synchronous reactance"
+    unit: pu
+    required: true
+    range: [0.0, Inf]
+
+  - name: Xq
+    position: 10
+    type: Float64
+    description: "q-axis synchronous reactance"
+    unit: pu
+    required: true
+    range: [0.0, Inf]
+
+  - name: Xd1
+    position: 11
+    type: Float64
+    description: "d-axis transient reactance"
+    unit: pu
+    required: true
+    range: [0.0, Inf]
+
+  - name: Xd2
+    position: 12
+    type: Float64
+    description: "d-axis subtransient reactance"
+    unit: pu
+    required: true
+    range: [0.0, Inf]
+
+  - name: Xl
+    position: 13
+    type: Float64
+    description: "Leakage reactance"
+    unit: pu
+    required: true
+    range: [0.0, Inf]
+
+  - name: S10
+    position: 14
+    type: Float64
+    description: "Saturation factor at 1.0 pu flux"
+    unit: dimensionless
+    required: true
+    range: [0.0, Inf]
+    default: 0.0
+
+  - name: S12
+    position: 15
+    type: Float64
+    description: "Saturation factor at 1.2 pu flux"
+    unit: dimensionless
+    required: true
+    range: [0.0, Inf]
+    default: 1.0
