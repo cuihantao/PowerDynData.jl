@@ -1,5 +1,91 @@
+# Julia coverage files
 *.jl.*.cov
 *.jl.cov
 *.jl.mem
+
+# Julia package manager
+# Manifest.toml is typically gitignored for packages but kept for applications
+# For a package/library, uncomment the next line:
+Manifest.toml
+
+# Build artifacts
+deps/deps.jl
+deps/build.log
+deps/downloads/
+deps/usr/
+deps/src/
+*.so
+*.dylib
+*.dll
+
+# Precompilation cache
+*.ji
+
+# Documentation builds
 /docs/Manifest*.toml
 /docs/build/
+docs/site/
+
+# Jupyter/IJulia notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# JetBrains IDEs (e.g., PyCharm, IntelliJ with Julia plugin)
+.idea/
+*.iml
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# Vim
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+.directory
+
+# Windows
+Thumbs.db
+eINK~
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+
+# Test artifacts
+test/*.out
+test/temp/
+
+# Local configuration
+LocalPreferences.toml
+
+# Scratch space
+scratch/
+temp/
+tmp/
+
+# Data files (uncomment if you want to ignore data)
+# *.csv
+# *.dat
+# *.h5
+# *.hdf5
+
+# Output files
+output/
+results/
+plots/
