@@ -1,7 +1,7 @@
 name = "PowerDynData"
 uuid = "8af9307f-baed-4afb-b455-e9e9cc62a748"
 authors = ["Hantao Cui"]
-version = "1.0.0-DEV"
+version = "0.1.0"
 
 [deps]
 Parsers = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
@@ -14,6 +14,13 @@ PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
 
 [compat]
 julia = "1.9"
+Parsers = "2"
+InlineStrings = "1"
+Tables = "1"
+YAML = "0.4"
+StructArrays = "0.6"
+DocStringExtensions = "0.9"
+PrecompileTools = "1"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
