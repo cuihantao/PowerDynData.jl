@@ -444,6 +444,7 @@ Contributions welcome! Areas of interest:
 
 - **[PowerFlowData.jl](https://github.com/cuihantao/PowerFlowData.jl)**: PSS/E RAW file parser
 - **[Powerful.jl](https://github.com/cuihantao/Powerful.jl)**: Power systems simulation package
+- **[PowerSystems.jl](https://nrel-sienna.github.io/PowerSystems.jl/stable/explanation/dynamic_data/)**: PowerSystems Data Handling Package
 
 ## License
 
