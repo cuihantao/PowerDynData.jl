@@ -40,14 +40,89 @@ tgov1_df = DataFrame(dd["TGOV1"])
 
 # Inspect available models
 keys(dd)  # => ["GENROU", "ESST3A", "TGOV1", "GENCLS", ...]
-
-# Check validation issues (if any)
-if !isempty(dd.validation_issues)
-    for issue in dd.validation_issues
-        println("$(issue.model_name)[$(issue.record_index)].$(issue.field_name): $(issue.message)")
-    end
-end
 ```
+
+## TOML Format Support
+
+PowerDynData also supports a TOML-based format as an alternative to DYR. TOML provides self-documenting data with explicit field names, making it easier to read and version control.
+
+### Parsing TOML Files
+
+```julia
+# Parse TOML file - same API as parse_dyr
+dd = parse_toml("case.toml")
+
+# Access models identically to DYR
+genrou_df = DataFrame(dd["GENROU"])
+```
+
+### Converting DYR to TOML
+
+```julia
+# Convert existing DYR file to TOML
+dyr_to_toml("case.dyr", "case.toml")
+```
+
+### DYR vs TOML: Side-by-Side Example
+
+**DYR format** (positional fields):
+```
+1 'GENCLS' 1   3.0  0.0 /
+```
+
+**TOML format** (named fields):
+```toml
+[[GENCLS]]
+BUS = 1
+ID = "1"
+H = 3.0
+D = 0.0
+```
+
+In DYR, fields are identified by position. In TOML, each field is explicit with `name = value`. Use `[[MODEL]]` (double brackets) to create an array - each `[[MODEL]]` block adds one device instance.
+
+### TOML Format Syntax
+
+```toml
+# IEEE 14-bus dynamic data
+
+# Each model instance uses [[MODEL_NAME]] syntax
+[[GENROU]]
+BUS = 1
+ID = "1"
+H = 4.0         # Inertia constant (MW·s/MVA)
+D = 0.0         # Damping coefficient
+Xd = 1.8        # Direct axis synchronous reactance
+Xd1 = 0.6       # Direct axis transient reactance
+Td10 = 6.5      # D-axis transient time constant
+# ... additional fields
+
+[[GENROU]]
+BUS = 2
+ID = "1"
+H = 6.5
+# ...
+
+[[TGOV1]]
+BUS = 1
+ID = "1"
+R = 0.05        # Permanent droop
+T1 = 1.0        # Governor time constant
+Vmax = 1.05     # Maximum valve position
+Vmin = 0.3      # Minimum valve position
+```
+
+### DYR vs TOML Comparison
+
+| Feature | DYR | TOML |
+|---------|-----|------|
+| Field identification | By position | By name |
+| Comments | Limited | Full support (`#`) |
+| Readability | Requires metadata reference | Self-documenting |
+| Version control | Difficult diffs | Clean diffs |
+| Type safety | All text | Native types |
+
+Field names in TOML must match the metadata YAML definitions exactly (e.g., `H`, `Xd`, `Td10`).
 
 ## User-Facing API
 
@@ -63,17 +138,24 @@ Parse a PSS/E DYR file into structured data.
 
 **Returns:** `DynamicData` container with all parsed models
 
-**Examples:**
+```julia
+dd = parse_dyr("case.dyr")
+```
+
+#### `parse_toml(source; metadata_dir=pkgdir(PowerDynData, "metadata"))`
+
+Parse a TOML file into structured data. Same return type and API as `parse_dyr`.
 
 ```julia
-# With bundled metadata (default - recommended)
-dd = parse_dyr("case.dyr")
+dd = parse_toml("case.toml")
+```
 
-# Without metadata (indexed fallback)
-dd = parse_dyr("case.dyr", metadata_dir=nothing)
+#### `dyr_to_toml(dyr_source, toml_dest; metadata_dir=...)`
 
-# With custom metadata directory
-dd = parse_dyr("case.dyr", metadata_dir="path/to/custom/metadata")
+Convert a DYR file to TOML format.
+
+```julia
+dyr_to_toml("case.dyr", "case.toml")
 ```
 
 ### Data Structures

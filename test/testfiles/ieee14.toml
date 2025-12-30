@@ -1,0 +1,127 @@
+# IEEE 14-bus dynamic data in TOML format
+# Converted from ieee14.dyr
+
+# Generator models (GENROU)
+[[GENROU]]
+BUS = 1
+ID = "1"
+Td10 = 6.5
+Td20 = 0.06
+Tq10 = 0.2
+Tq20 = 0.05
+H = 4.0
+D = 0.0
+Xd = 1.8
+Xq = 1.75
+Xd1 = 0.6
+Xq1 = 0.8
+Xd2 = 0.23
+Xl = 0.15
+S10 = 0.09
+S12 = 0.38
+
+[[GENROU]]
+BUS = 2
+ID = "1"
+Td10 = 6.5
+Td20 = 0.06
+Tq10 = 0.2
+Tq20 = 0.05
+H = 6.5
+D = 0.0
+Xd = 1.8
+Xq = 1.75
+Xd1 = 0.6
+Xq1 = 0.8
+Xd2 = 0.28
+Xl = 0.15
+S10 = 0.09
+S12 = 0.38
+
+[[GENROU]]
+BUS = 3
+ID = "1"
+Td10 = 6.5
+Td20 = 0.06
+Tq10 = 0.2
+Tq20 = 0.05
+H = 5.0
+D = 0.0
+Xd = 1.8
+Xq = 1.75
+Xd1 = 0.6
+Xq1 = 0.8
+Xd2 = 0.34
+Xl = 0.15
+S10 = 0.09
+S12 = 0.38
+
+[[GENROU]]
+BUS = 6
+ID = "1"
+Td10 = 6.5
+Td20 = 0.06
+Tq10 = 0.2
+Tq20 = 0.05
+H = 5.0
+D = 0.0
+Xd = 1.8
+Xq = 1.75
+Xd1 = 0.6
+Xq1 = 0.8
+Xd2 = 0.28
+Xl = 0.15
+S10 = 0.09
+S12 = 0.38
+
+[[GENROU]]
+BUS = 8
+ID = "1"
+Td10 = 6.5
+Td20 = 0.06
+Tq10 = 0.2
+Tq20 = 0.05
+H = 5.0
+D = 0.0
+Xd = 1.8
+Xq = 1.75
+Xd1 = 0.6
+Xq1 = 0.8
+Xd2 = 0.34
+Xl = 0.15
+S10 = 0.09
+S12 = 0.38
+
+# Governor models (TGOV1)
+[[TGOV1]]
+BUS = 1
+ID = "1"
+R = 0.05
+Dt = 0.05
+Vmax = 1.05
+Vmin = 0.3
+T1 = 1.0
+T2 = 2.1
+T3 = 0.0
+
+[[TGOV1]]
+BUS = 6
+ID = "1"
+R = 0.05
+Dt = 0.05
+Vmax = 1.05
+Vmin = 0.3
+T1 = 1.0
+T2 = 2.1
+T3 = 0.0
+
+[[TGOV1]]
+BUS = 8
+ID = "1"
+R = 0.05
+Dt = 0.05
+Vmax = 1.05
+Vmin = 0.3
+T1 = 1.0
+T2 = 2.1
+T3 = 0.0
