@@ -1,13 +1,13 @@
 module PowerDynData
 
-using Parsers
-using InlineStrings
-using Tables
-using YAML
-using TOML
-using StructArrays
-using DocStringExtensions
-using PrecompileTools
+using DocStringExtensions: TYPEDEF, TYPEDFIELDS
+using InlineStrings: InlineStrings
+using Parsers: Parsers
+using PrecompileTools: @compile_workload, @setup_workload
+using StructArrays: StructArray
+using Tables: Tables
+using TOML: TOML
+using YAML: YAML
 
 # Export main API
 export parse_dyr, parse_toml, DynamicData, DynamicRecords
