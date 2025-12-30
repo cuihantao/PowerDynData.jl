@@ -21,7 +21,7 @@ PrecompileTools = "1"
 StructArrays = "0.6, 0.7"
 Tables = "1"
 YAML = "0.4"
-julia = "1"
+julia = "1.10, 1.11, 1.12"
 
 [extras]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
