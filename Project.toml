@@ -1,6 +1,6 @@
 name = "PowerDynData"
 uuid = "8af9307f-baed-4afb-b455-e9e9cc62a748"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Hantao Cui"]
 
 [deps]
