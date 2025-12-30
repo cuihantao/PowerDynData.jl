@@ -1,6 +1,6 @@
 model:
-  name: GENSAL
-  description: Salient Pole Generator Model (Quadratic Saturation on d-Axis)
+  name: GENQEC
+  description: PSLF GENQEC Generator Model
   category: generator
   version: 33
 
@@ -43,8 +43,16 @@ fields:
     required: true
     range: [0.0, Inf]
 
-  - name: Tq20
+  - name: Tq10
     position: 6
+    type: Float64
+    description: "q-axis transient open-circuit time constant"
+    unit: seconds
+    required: true
+    range: [0.0, Inf]
+
+  - name: Tq20
+    position: 7
     type: Float64
     description: "q-axis subtransient open-circuit time constant"
     unit: seconds
@@ -52,7 +60,7 @@ fields:
     range: [0.0, Inf]
 
   - name: H
-    position: 7
+    position: 8
     type: Float64
     description: "Inertia constant"
     unit: "MW·s/MVA"
@@ -60,15 +68,15 @@ fields:
     range: [0.0, Inf]
 
   - name: D
-    position: 8
+    position: 9
     type: Float64
-    description: "Speed damping"
+    description: "Damping coefficient"
     unit: pu
     required: true
     range: [0.0, Inf]
 
   - name: Xd
-    position: 9
+    position: 10
     type: Float64
     description: "d-axis synchronous reactance"
     unit: pu
@@ -76,7 +84,7 @@ fields:
     range: [0.0, Inf]
 
   - name: Xq
-    position: 10
+    position: 11
     type: Float64
     description: "q-axis synchronous reactance"
     unit: pu
@@ -84,31 +92,47 @@ fields:
     range: [0.0, Inf]
 
   - name: Xd1
-    position: 11
+    position: 12
     type: Float64
     description: "d-axis transient reactance"
     unit: pu
     required: true
     range: [0.0, Inf]
 
+  - name: Xq1
+    position: 13
+    type: Float64
+    description: "q-axis transient reactance"
+    unit: pu
+    required: true
+    range: [0.0, Inf]
+
   - name: Xd2
-    position: 12
+    position: 14
     type: Float64
     description: "d-axis subtransient reactance"
     unit: pu
     required: true
     range: [0.0, Inf]
 
-  - name: Xl
-    position: 13
+  - name: Xq2
+    position: 15
     type: Float64
-    description: "Leakage reactance"
+    description: "q-axis subtransient reactance"
+    unit: pu
+    required: true
+    range: [0.0, Inf]
+
+  - name: Xl
+    position: 16
+    type: Float64
+    description: "Stator leakage reactance"
     unit: pu
     required: true
     range: [0.0, Inf]
 
   - name: S10
-    position: 14
+    position: 17
     type: Float64
     description: "Saturation factor at 1.0 pu flux"
     unit: dimensionless
@@ -116,9 +140,50 @@ fields:
     range: [0.0, Inf]
 
   - name: S12
-    position: 15
+    position: 18
     type: Float64
     description: "Saturation factor at 1.2 pu flux"
     unit: dimensionless
     required: true
     range: [0.0, Inf]
+
+  - name: Ra
+    position: 19
+    type: Float64
+    description: "Stator resistance"
+    unit: pu
+    required: true
+    range: [0.0, Inf]
+
+  - name: Rcomp
+    position: 20
+    type: Float64
+    description: "Compounding resistance for voltage control"
+    unit: pu
+    required: true
+    range: [0.0, Inf]
+
+  - name: Xcomp
+    position: 21
+    type: Float64
+    description: "Compounding reactance for voltage control"
+    unit: pu
+    required: true
+    range: [0.0, Inf]
+
+  - name: Kw
+    position: 22
+    type: Float64
+    description: "Rotor field current compensation factor"
+    unit: dimensionless
+    required: true
+    range: [0.0, 1.0]
+
+  - name: Satflg
+    position: 23
+    type: Int
+    description: "Saturation type selector"
+    unit: dimensionless
+    required: true
+    range: [-1, Inf]
+
