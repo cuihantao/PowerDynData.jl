@@ -332,85 +332,24 @@ end
 Create NamedDynamicRecords using metadata schema.
 """
 function create_named_records(model_name::String, metadata::ModelMetadata, records::Vector{ParsedRecord}, validation_issues::Vector{ValidationIssue})
-    @pdebug 2 "Creating named records for $model_name ($(length(records)) records, $(length(metadata.fields)) fields)"
-
-    # Initialize storage for each field
-    field_data = Dict{Symbol, Vector{Any}}()
-    for field_meta in metadata.fields
-        field_data[field_meta.name] = Any[]
-    end
-
-    # Parse each record
-    for (record_idx, record) in enumerate(records)
-        for field_meta in metadata.fields
-            pos = field_meta.position
-
-            # Get raw field value
-            if pos <= length(record.fields)
-                raw_value = record.fields[pos]
-
-                # Parse according to type
-                try
-                    value = parse_field(field_meta.type, raw_value)
-
-                    # Check range if specified (but don't error - just record the issue)
-                    if !isnothing(field_meta.range) && value isa Number
-                        min_val, max_val = field_meta.range
-                        if value < min_val || value > max_val
-                            issue = ValidationIssue(
-                                model_name,
-                                record_idx,
-                                field_meta.name,
-                                :out_of_range,
-                                "Value $value outside valid range [$min_val, $max_val]",
-                                value
-                            )
-                            push!(validation_issues, issue)
-                        end
-                    end
-
-                    # Always push the actual value (even if out of range)
-                    push!(field_data[field_meta.name], value)
-                catch e
-                    @warn "Failed to parse field $(field_meta.name) at position $pos: $e"
-                    # Record parse error
-                    issue = ValidationIssue(
-                        model_name,
-                        record_idx,
-                        field_meta.name,
-                        :parse_error,
-                        "Failed to parse: $e",
-                        raw_value
-                    )
-                    push!(validation_issues, issue)
-
-                    # Use default or push missing
-                    default_val = something(field_meta.default, missing)
-                    push!(field_data[field_meta.name], default_val)
-                end
-            else
-                # Field not present - use default
-                default_val = something(field_meta.default, missing)
-                push!(field_data[field_meta.name], default_val)
-            end
-        end
-    end
-
-    # Convert to proper types and create StructArray
-    typed_data = Dict{Symbol, Vector}()
-    for field_meta in metadata.fields
-        # Convert to proper vector type
-        raw_vec = field_data[field_meta.name]
-        if all(x -> x isa field_meta.type, raw_vec)
-            typed_data[field_meta.name] = convert(Vector{field_meta.type}, raw_vec)
+    # DYR field extraction: by position in record.fields
+    function get_dyr_field(record::ParsedRecord, field_meta::FieldMetadata)
+        pos = field_meta.position
+        if pos <= length(record.fields)
+            return FieldValue(record.fields[pos])
         else
-            # Has missing values or type mismatch
-            typed_data[field_meta.name] = raw_vec
+            return FieldValue()
         end
     end
 
-    # Create StructArray
-    sa = StructArray(; typed_data...)
+    # DYR value conversion: parse string to expected type
+    function convert_dyr_value(field_meta::FieldMetadata, raw_value::String)
+        return parse_field(field_meta.type, raw_value)
+    end
 
-    return NamedDynamicRecords(model_name, metadata.category, sa)
+    return create_named_records_generic(
+        model_name, metadata, records, validation_issues;
+        get_field_value = get_dyr_field,
+        convert_value = convert_dyr_value
+    )
 end

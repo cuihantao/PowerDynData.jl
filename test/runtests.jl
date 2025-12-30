@@ -1,5 +1,6 @@
 using PowerDynData
 using Test
+using TOML
 
 @testset "PowerDynData.jl" begin
     @testset "Metadata loading" begin
@@ -201,6 +202,344 @@ using Test
                 else
                     @warn "Test file $filename not found, skipping"
                 end
+            end
+        end
+    end
+
+    @testset "TOML Parsing" begin
+        @testset "TOML parsing with metadata" begin
+            toml_file = joinpath(@__DIR__, "testfiles", "ieee14.toml")
+            if isfile(toml_file)
+                dd = parse_toml(toml_file)
+
+                @test dd isa DynamicData
+                @test haskey(dd, "GENROU")
+                @test haskey(dd, "TGOV1")
+                @test length(dd["GENROU"]) == 5
+                @test length(dd["TGOV1"]) == 3
+
+                genrou = dd["GENROU"]
+                @test genrou isa NamedDynamicRecords
+                @test genrou.data.BUS[1] == 1
+                @test genrou.data.H[1] ≈ 4.0
+
+                # Test DataFrame conversion
+                using DataFrames
+                df = DataFrame(genrou)
+                @test nrow(df) == 5
+                @test df.BUS[1] == 1
+            else
+                @warn "Test file ieee14.toml not found, skipping"
+            end
+        end
+
+        @testset "TOML parsing without metadata" begin
+            toml_file = joinpath(@__DIR__, "testfiles", "ieee14.toml")
+            if isfile(toml_file)
+                dd = parse_toml(toml_file; metadata_dir=nothing)
+
+                @test haskey(dd, "GENROU")
+                @test dd["GENROU"] isa IndexedDynamicRecords
+            else
+                @warn "Test file ieee14.toml not found, skipping"
+            end
+        end
+
+        @testset "TOML type conversion" begin
+            # Test convert_toml_value function
+            @test PowerDynData.convert_toml_value(Float64, 1) === 1.0  # Int → Float64
+            @test PowerDynData.convert_toml_value(Float64, 1.5) === 1.5
+            @test PowerDynData.convert_toml_value(Int, 5.0) === 5  # Float64 → Int (whole number)
+            @test PowerDynData.convert_toml_value(String, 123) == "123"
+        end
+
+        @testset "TOML validation issues" begin
+            # Test with out-of-range value
+            test_toml = """
+            [[GENROU]]
+            BUS = 1
+            ID = "1"
+            Td10 = 6.5
+            Td20 = 0.06
+            Tq10 = 0.2
+            Tq20 = 0.05
+            H = -5.0
+            D = 0.0
+            Xd = 1.8
+            Xq = 1.75
+            Xd1 = 0.6
+            Xq1 = 0.8
+            Xd2 = 0.23
+            Xl = 0.15
+            S10 = 0.09
+            S12 = 0.38
+            """
+
+            dd = parse_toml(IOBuffer(test_toml))
+            @test haskey(dd, "GENROU")
+            @test !isempty(dd.validation_issues)
+
+            # Find the H field validation issue
+            h_issue = findfirst(i -> i.field_name == :H, dd.validation_issues)
+            @test !isnothing(h_issue)
+            @test dd.validation_issues[h_issue].issue_type == :out_of_range
+        end
+
+        @testset "Malformed TOML input (HIGH #5)" begin
+            # Test 1: Invalid TOML syntax - should throw TOML parse error
+            invalid_toml = """
+            [[GENROU]
+            BUS = 1
+            """
+            @test_throws TOML.ParserError parse_toml(IOBuffer(invalid_toml))
+
+            # Test 2: Missing closing bracket
+            invalid_toml2 = """
+            [[GENROU
+            BUS = 1
+            """
+            @test_throws TOML.ParserError parse_toml(IOBuffer(invalid_toml2))
+
+            # Test 3: Invalid value type - string where number expected
+            # This should record a parse error, not throw
+            invalid_value_toml = """
+            [[GENROU]]
+            BUS = "not_a_number"
+            ID = "1"
+            Td10 = 6.5
+            Td20 = 0.06
+            Tq10 = 0.2
+            Tq20 = 0.05
+            H = 4.0
+            D = 0.0
+            Xd = 1.8
+            Xq = 1.75
+            Xd1 = 0.6
+            Xq1 = 0.8
+            Xd2 = 0.23
+            Xl = 0.15
+            S10 = 0.09
+            S12 = 0.38
+            """
+            dd = parse_toml(IOBuffer(invalid_value_toml))
+            @test haskey(dd, "GENROU")
+            # Should have a parse error for BUS field
+            bus_issue = findfirst(i -> i.field_name == :BUS && i.issue_type == :parse_error, dd.validation_issues)
+            @test !isnothing(bus_issue)
+
+            # Test 4: Empty TOML - should work with empty models
+            empty_toml = ""
+            dd = parse_toml(IOBuffer(empty_toml))
+            @test dd isa DynamicData
+            @test length(dd) == 0
+
+            # Test 5: Non-array entry (single table instead of array) - should be skipped
+            single_table_toml = """
+            [METADATA]
+            version = "1.0"
+
+            [[GENROU]]
+            BUS = 1
+            ID = "1"
+            Td10 = 6.5
+            Td20 = 0.06
+            Tq10 = 0.2
+            Tq20 = 0.05
+            H = 4.0
+            D = 0.0
+            Xd = 1.8
+            Xq = 1.75
+            Xd1 = 0.6
+            Xq1 = 0.8
+            Xd2 = 0.23
+            Xl = 0.15
+            S10 = 0.09
+            S12 = 0.38
+            """
+            dd = parse_toml(IOBuffer(single_table_toml))
+            @test !haskey(dd, "METADATA")  # Single table should be skipped
+            @test haskey(dd, "GENROU")     # Array table should be parsed
+        end
+
+        @testset "Required field validation (HIGH #6)" begin
+            # Test 1: Missing required field BUS (has no default)
+            missing_required_toml = """
+            [[GENROU]]
+            ID = "1"
+            Td10 = 6.5
+            Td20 = 0.06
+            Tq10 = 0.2
+            Tq20 = 0.05
+            H = 4.0
+            D = 0.0
+            Xd = 1.8
+            Xq = 1.75
+            Xd1 = 0.6
+            Xq1 = 0.8
+            Xd2 = 0.23
+            Xl = 0.15
+            S10 = 0.09
+            S12 = 0.38
+            """
+            dd = parse_toml(IOBuffer(missing_required_toml))
+            @test haskey(dd, "GENROU")
+
+            # Should have a validation issue for missing BUS
+            bus_issue = findfirst(i -> i.field_name == :BUS, dd.validation_issues)
+            @test !isnothing(bus_issue)
+            @test dd.validation_issues[bus_issue].issue_type in (:missing_required, :missing_field)
+
+            # Test 2: Missing ID field (has default "1")
+            missing_id_toml = """
+            [[TGOV1]]
+            BUS = 1
+            R = 0.05
+            Dt = 0.05
+            Vmax = 1.05
+            Vmin = 0.3
+            T1 = 1.0
+            T2 = 2.1
+            T3 = 0.0
+            """
+            dd = parse_toml(IOBuffer(missing_id_toml))
+            @test haskey(dd, "TGOV1")
+            @test length(dd["TGOV1"]) == 1
+
+            # ID should use default value "1"
+            @test dd["TGOV1"].data.ID[1] == "1"
+
+            # Test 3: Multiple missing required fields
+            minimal_toml = """
+            [[GENROU]]
+            BUS = 1
+            ID = "1"
+            """
+            dd = parse_toml(IOBuffer(minimal_toml))
+            @test haskey(dd, "GENROU")
+
+            # Should have multiple validation issues for missing fields
+            @test length(dd.validation_issues) > 0
+            missing_issues = filter(i -> i.issue_type in (:missing_required, :missing_field), dd.validation_issues)
+            @test length(missing_issues) > 0
+        end
+
+        @testset "Unknown fields warning (TOML)" begin
+            # Test that unknown fields generate warnings but parsing continues
+            unknown_field_toml = """
+            [[GENROU]]
+            BUS = 1
+            ID = "1"
+            UNKNOWN_FIELD = 999
+            Td10 = 6.5
+            Td20 = 0.06
+            Tq10 = 0.2
+            Tq20 = 0.05
+            H = 4.0
+            D = 0.0
+            Xd = 1.8
+            Xq = 1.75
+            Xd1 = 0.6
+            Xq1 = 0.8
+            Xd2 = 0.23
+            Xl = 0.15
+            S10 = 0.09
+            S12 = 0.38
+            """
+            # This should not throw, just warn
+            dd = parse_toml(IOBuffer(unknown_field_toml))
+            @test haskey(dd, "GENROU")
+            @test dd["GENROU"].data.BUS[1] == 1
+        end
+
+        @testset "Type conversion edge cases (TOML)" begin
+            # Test self-contained convert_toml_value function
+            # Float from string
+            @test PowerDynData.convert_toml_value(Float64, "1.5") ≈ 1.5
+            @test PowerDynData.convert_toml_value(Float64, "0.60000E-01") ≈ 0.06
+
+            # Int from string
+            @test PowerDynData.convert_toml_value(Int, "123") === 123
+
+            # Bool conversions
+            @test PowerDynData.convert_toml_value(Bool, "true") === true
+            @test PowerDynData.convert_toml_value(Bool, "false") === false
+            @test PowerDynData.convert_toml_value(Bool, "1") === true
+            @test PowerDynData.convert_toml_value(Bool, "0") === false
+            @test PowerDynData.convert_toml_value(Bool, 1) === true
+            @test PowerDynData.convert_toml_value(Bool, 0) === false
+
+            # Invalid conversion should throw
+            @test_throws ArgumentError PowerDynData.convert_toml_value(Bool, "invalid")
+            @test_throws ArgumentError PowerDynData.convert_toml_value(Int, [1, 2, 3])
+        end
+    end
+
+    @testset "DYR to TOML Conversion" begin
+        @testset "Basic conversion" begin
+            dyr_file = joinpath(@__DIR__, "testfiles", "ieee14.dyr")
+            if isfile(dyr_file)
+                # Convert to TOML string
+                io = IOBuffer()
+                dyr_to_toml(dyr_file, io)
+                toml_str = String(take!(io))
+
+                # Verify TOML is valid and contains expected models
+                @test contains(toml_str, "[[GENROU]]")
+                @test contains(toml_str, "[[TGOV1]]")
+                @test contains(toml_str, "BUS = ")
+                @test contains(toml_str, "H = ")
+            else
+                @warn "Test file ieee14.dyr not found, skipping"
+            end
+        end
+
+        @testset "Round-trip: DYR → TOML → parse" begin
+            dyr_file = joinpath(@__DIR__, "testfiles", "ieee14.dyr")
+            if isfile(dyr_file)
+                dd_original = parse_dyr(dyr_file)
+
+                # Convert to TOML string
+                io = IOBuffer()
+                dyr_to_toml(dyr_file, io)
+                toml_str = String(take!(io))
+
+                # Parse TOML
+                dd_converted = parse_toml(IOBuffer(toml_str))
+
+                # Compare GENROU data
+                @test haskey(dd_converted, "GENROU")
+                @test length(dd_converted["GENROU"]) == length(dd_original["GENROU"])
+
+                # Values should match
+                @test dd_original["GENROU"].data.H == dd_converted["GENROU"].data.H
+                @test dd_original["GENROU"].data.BUS == dd_converted["GENROU"].data.BUS
+
+                # Compare TGOV1 data
+                if haskey(dd_original, "TGOV1") && haskey(dd_converted, "TGOV1")
+                    @test length(dd_converted["TGOV1"]) == length(dd_original["TGOV1"])
+                end
+            else
+                @warn "Test file ieee14.dyr not found, skipping"
+            end
+        end
+
+        @testset "File-based conversion" begin
+            dyr_file = joinpath(@__DIR__, "testfiles", "ieee14.dyr")
+            if isfile(dyr_file)
+                toml_file = tempname() * ".toml"
+                try
+                    # Convert to file
+                    dyr_to_toml(dyr_file, toml_file)
+                    @test isfile(toml_file)
+
+                    # Parse and verify
+                    dd = parse_toml(toml_file)
+                    @test haskey(dd, "GENROU")
+                finally
+                    rm(toml_file; force=true)
+                end
+            else
+                @warn "Test file ieee14.dyr not found, skipping"
             end
         end
     end
