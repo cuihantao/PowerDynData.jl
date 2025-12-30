@@ -543,4 +543,287 @@ using TOML
             end
         end
     end
+
+    @testset "Coverage: Tables.jl interface" begin
+        testfile = joinpath(@__DIR__, "testfiles", "ieee14.dyr")
+        if isfile(testfile)
+            dd = parse_dyr(testfile)
+            genrou = dd["GENROU"]
+
+            # Test Tables.jl trait methods explicitly with the type
+            # These are type-level methods that need to be called with Type{<:NamedDynamicRecords}
+            T = typeof(genrou)
+            @test Tables.istable(T) == true
+            @test Tables.columnaccess(T) == true
+
+            # Test Tables.jl interface functions on instances
+            @test Tables.columns(genrou) === genrou.data
+            @test Tables.columnnames(genrou) == propertynames(genrou.data)
+
+            # Test getcolumn with Int index
+            @test Tables.getcolumn(genrou, 1) == getfield(genrou.data, 1)
+
+            # Test getcolumn with Symbol
+            @test Tables.getcolumn(genrou, :BUS) == genrou.data.BUS
+
+            # Also verify Tables integration by using Tables.columns
+            cols = Tables.columns(genrou)
+            @test :BUS in propertynames(cols)
+        end
+    end
+
+    @testset "Coverage: Pretty printing" begin
+        testfile = joinpath(@__DIR__, "testfiles", "ieee14.dyr")
+        if isfile(testfile)
+            # Test DynamicData show methods
+            dd = parse_dyr(testfile)
+
+            # Compact show
+            io = IOBuffer()
+            show(io, dd)
+            compact_str = String(take!(io))
+            @test contains(compact_str, "DynamicData")
+            @test contains(compact_str, "models")
+            @test contains(compact_str, "records")
+            @test contains(compact_str, "with metadata")
+
+            # Detailed show (MIME"text/plain")
+            io = IOBuffer()
+            show(io, MIME"text/plain"(), dd)
+            detailed_str = String(take!(io))
+            @test contains(detailed_str, "DynamicData from:")
+            @test contains(detailed_str, "Models:")
+            @test contains(detailed_str, "Metadata: loaded")
+            @test contains(detailed_str, "Validation issues:")
+
+            # NamedDynamicRecords show
+            genrou = dd["GENROU"]
+            io = IOBuffer()
+            show(io, genrou)
+            genrou_str = String(take!(io))
+            @test contains(genrou_str, "NamedDynamicRecords")
+            @test contains(genrou_str, "GENROU")
+            @test contains(genrou_str, "records")
+
+            # IndexedDynamicRecords show
+            dd_no_meta = parse_dyr(testfile; metadata_dir=nothing)
+            indexed = dd_no_meta["GENROU"]
+            io = IOBuffer()
+            show(io, indexed)
+            indexed_str = String(take!(io))
+            @test contains(indexed_str, "IndexedDynamicRecords")
+            @test contains(indexed_str, "GENROU")
+
+            # DynamicData without metadata
+            io = IOBuffer()
+            show(io, MIME"text/plain"(), dd_no_meta)
+            no_meta_str = String(take!(io))
+            @test contains(no_meta_str, "Metadata: not loaded")
+        end
+    end
+
+    @testset "Coverage: MetadataRegistry show" begin
+        metadata_dir = pkgdir(PowerDynData, "metadata")
+        registry = load_metadata_registry(metadata_dir)
+
+        # Compact show
+        io = IOBuffer()
+        show(io, registry)
+        compact_str = String(take!(io))
+        @test contains(compact_str, "MetadataRegistry")
+        @test contains(compact_str, "models")
+        @test contains(compact_str, "categories")
+
+        # Detailed show (MIME"text/plain")
+        io = IOBuffer()
+        show(io, MIME"text/plain"(), registry)
+        detailed_str = String(take!(io))
+        @test contains(detailed_str, "MetadataRegistry:")
+        @test contains(detailed_str, "Total models:")
+        @test contains(detailed_str, "Categories:")
+    end
+
+    @testset "Coverage: Bool parsing" begin
+        # Test parse_field for Bool type
+        @test PowerDynData.parse_field(Bool, "1") == true
+        @test PowerDynData.parse_field(Bool, "true") == true
+        @test PowerDynData.parse_field(Bool, "t") == true
+        @test PowerDynData.parse_field(Bool, "TRUE") == true
+
+        @test PowerDynData.parse_field(Bool, "0") == false
+        @test PowerDynData.parse_field(Bool, "false") == false
+        @test PowerDynData.parse_field(Bool, "f") == false
+        @test PowerDynData.parse_field(Bool, "FALSE") == false
+
+        # Test error for invalid bool
+        @test_throws ErrorException PowerDynData.parse_field(Bool, "invalid")
+    end
+
+    @testset "Coverage: string_to_type" begin
+        # Test Bool type conversion
+        @test PowerDynData.string_to_type("Bool") == Bool
+
+        # Test error for unknown type
+        @test_throws ErrorException PowerDynData.string_to_type("UnknownType")
+    end
+
+    @testset "Coverage: validate_range" begin
+        # Test validate_range throws error for out of range
+        @test_throws ErrorException PowerDynData.validate_range(10.0, (0.0, 5.0), :TestField)
+        @test_throws ErrorException PowerDynData.validate_range(-1.0, (0.0, 5.0), :TestField)
+
+        # Test validate_range passes for in-range values (no error thrown)
+        @test isnothing(PowerDynData.validate_range(3.0, (0.0, 5.0), :TestField))
+    end
+
+    @testset "Coverage: Debug macro" begin
+        # Test the @pdebug macro with debug enabled
+        old_level = PowerDynData.DEBUG_LEVEL[]
+        try
+            # Enable debug level
+            PowerDynData.DEBUG_LEVEL[] = 2
+            @test PowerDynData.DEBUG_LEVEL[] == 2
+
+            # Parse a file with debug enabled to trigger debug output
+            # This exercises the debug print path in the @pdebug macro
+            testfile = joinpath(@__DIR__, "testfiles", "ieee14.dyr")
+            if isfile(testfile)
+                dd = parse_dyr(testfile)
+                @test dd isa DynamicData
+            end
+        finally
+            PowerDynData.DEBUG_LEVEL[] = old_level
+        end
+    end
+
+    @testset "Coverage: skip_whitespace_and_comments (SubString)" begin
+        # Test the skip_whitespace_and_comments function for SubString
+        lines = split("@! comment\n\ndata line\n// another comment", '\n')
+        result = PowerDynData.skip_whitespace_and_comments(lines, 1)
+        @test result == 3  # Should skip to "data line"
+
+        # Test when starting past comments
+        result2 = PowerDynData.skip_whitespace_and_comments(lines, 3)
+        @test result2 == 3  # Should stay at "data line"
+
+        # Test when all lines are comments/empty
+        all_comments = split("@! comment\n// comment\n\n", '\n')
+        result3 = PowerDynData.skip_whitespace_and_comments(all_comments, 1)
+        @test result3 > length(all_comments)  # Should return index past end
+    end
+
+    @testset "Coverage: Metadata parse failure handling" begin
+        # Test that invalid YAML files are handled gracefully
+        # Create a temporary directory with an invalid YAML file
+        mktempdir() do tmpdir
+            invalid_yaml = joinpath(tmpdir, "invalid.yaml")
+            write(invalid_yaml, "invalid: yaml: syntax: [")
+
+            # Loading should not throw, but warn
+            registry = load_metadata_registry(tmpdir)
+            @test registry isa MetadataRegistry
+            @test isempty(registry.models)  # Invalid file should not add any models
+        end
+    end
+
+    @testset "Coverage: DynamicData validation issues display" begin
+        # Test show when there are only parse errors (no out-of-range)
+        toml_with_parse_error = """
+        [[GENROU]]
+        BUS = "not_an_int"
+        ID = "1"
+        Td10 = 6.5
+        Td20 = 0.06
+        Tq10 = 0.2
+        Tq20 = 0.05
+        H = 4.0
+        D = 0.0
+        Xd = 1.8
+        Xq = 1.75
+        Xd1 = 0.6
+        Xq1 = 0.8
+        Xd2 = 0.23
+        Xl = 0.15
+        S10 = 0.09
+        S12 = 0.38
+        """
+        dd = parse_toml(IOBuffer(toml_with_parse_error))
+
+        io = IOBuffer()
+        show(io, MIME"text/plain"(), dd)
+        output = String(take!(io))
+        @test contains(output, "parse errors")
+    end
+
+    @testset "Coverage: DynamicData without validation issues" begin
+        # Create a minimal DynamicData without any validation issues
+        using StructArrays
+        data = StructArray(BUS=[1], ID=["1"])
+        records = NamedDynamicRecords("TEST", "test", data)
+        models = Dict{String, DynamicRecords}("TEST" => records)
+        dd = DynamicData(models, nothing, "test.dyr", ValidationIssue[])
+
+        io = IOBuffer()
+        show(io, MIME"text/plain"(), dd)
+        output = String(take!(io))
+        @test !contains(output, "Validation issues")
+    end
+
+    @testset "Coverage: DYR with comment lines" begin
+        # Test parsing DYR content with comment lines to cover skip_whitespace_and_comments_vec
+        dyr_with_comments = """
+        @! This is a comment
+        // Another comment style
+
+        1 'GENCLS' 1 5.0 0.0 /
+        """
+        dd = parse_dyr(IOBuffer(dyr_with_comments))
+        @test haskey(dd, "GENCLS")
+        @test length(dd["GENCLS"]) == 1
+    end
+
+    @testset "Coverage: DYR missing field position" begin
+        # Test when a field position in metadata exceeds the number of fields in the DYR record
+        # This tests line 341 in parsing.jl (return FieldValue() for missing position)
+
+        # Create a custom metadata directory with a model that has more fields than the DYR record provides
+        mktempdir() do tmpdir
+            # Create metadata file with more fields than we'll provide in the DYR
+            metadata_yaml = """
+            model:
+              name: TESTMODEL
+              description: Test model with many fields
+              category: test
+
+            parsing:
+              model_name_field: 2
+              multi_line: false
+              terminator: "/"
+
+            fields:
+              - name: BUS
+                position: 1
+                type: Int
+              - name: ID
+                position: 3
+                type: String
+                default: "1"
+              - name: EXTRA_FIELD
+                position: 10
+                type: Float64
+                default: 0.0
+            """
+            write(joinpath(tmpdir, "testmodel.yaml"), metadata_yaml)
+
+            # DYR record with only 4 fields (position 10 doesn't exist)
+            dyr_content = """
+            1 'TESTMODEL' '1' 5.0 /
+            """
+            dd = parse_dyr(IOBuffer(dyr_content); metadata_dir=tmpdir)
+            @test haskey(dd, "TESTMODEL")
+
+            # The EXTRA_FIELD at position 10 should use its default value
+            @test dd["TESTMODEL"].data.EXTRA_FIELD[1] == 0.0
+        end
+    end
 end
