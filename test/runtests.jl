@@ -3,8 +3,8 @@ using Test
 using TOML
 
 @testset "PowerDynData.jl" begin
-    @testset "Metadata loading" begin
-        # Test metadata registry loading with bundled metadata
+    @testset "Metadata loading (YAML)" begin
+        # Test metadata registry loading with YAML metadata (default)
         metadata_dir = pkgdir(PowerDynData, "metadata")
         registry = load_metadata_registry(metadata_dir)
 
@@ -717,7 +717,7 @@ using TOML
         # Create a temporary directory with an invalid YAML file
         mktempdir() do tmpdir
             invalid_yaml = joinpath(tmpdir, "invalid.yaml")
-            write(invalid_yaml, "invalid: yaml: syntax: [")
+            write(invalid_yaml, "invalid: yaml: syntax [")
 
             # Loading should not throw, but warn
             registry = load_metadata_registry(tmpdir)
@@ -788,30 +788,32 @@ using TOML
 
         # Create a custom metadata directory with a model that has more fields than the DYR record provides
         mktempdir() do tmpdir
-            # Create metadata file with more fields than we'll provide in the DYR
+            # Create YAML metadata file with more fields than we'll provide in the DYR
             metadata_yaml = """
-            model:
-              name: TESTMODEL
-              description: Test model with many fields
-              category: test
+model:
+  name: TESTMODEL
+  description: Test model with many fields
+  category: test
 
-            parsing:
-              model_name_field: 2
-              multi_line: false
-              terminator: "/"
+parsing:
+  model_name_field: 2
+  multi_line: false
+  terminator: "/"
 
-            fields:
-              - name: BUS
-                position: 1
-                type: Int
-              - name: ID
-                position: 3
-                type: String
-                default: "1"
-              - name: EXTRA_FIELD
-                position: 10
-                type: Float64
-                default: 0.0
+fields:
+  - name: BUS
+    position: 1
+    type: Int
+
+  - name: ID
+    position: 3
+    type: String
+    default: "1"
+
+  - name: EXTRA_FIELD
+    position: 10
+    type: Float64
+    default: 0.0
             """
             write(joinpath(tmpdir, "testmodel.yaml"), metadata_yaml)
 

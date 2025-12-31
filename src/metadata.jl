@@ -1,4 +1,4 @@
-# Metadata system for YAML-driven parsing
+# Metadata system for schema-driven parsing
 
 """
     $TYPEDEF
@@ -72,24 +72,66 @@ struct MetadataRegistry
 end
 
 """
+Maximum allowed size for metadata files (in bytes).
+Metadata files should be small (<1MB); larger files likely indicate an error.
+"""
+const MAX_METADATA_FILE_SIZE = 1024 * 1024  # 1 MB
+
+"""
     load_metadata_registry(metadata_dir::String) -> MetadataRegistry
 
-Load all YAML metadata files from a directory tree.
+Load all metadata files from a directory tree into a structured registry.
 
-Recursively scans `metadata_dir` for .yaml/.yml files and parses them
-into ModelMetadata objects. Organizes models by category.
+Recursively scans `metadata_dir` for YAML metadata files (.yaml or .yml) and
+parses them into ModelMetadata objects. Models are automatically organized by
+the `category` field in each YAML file.
 
 # Arguments
-- `metadata_dir`: Path to directory containing YAML metadata files
+- `metadata_dir`: Path to directory containing metadata files. Can include
+  subdirectories (e.g., `metadata/generators/`, `metadata/exciters/`).
 
 # Returns
-- `MetadataRegistry`: Registry containing all loaded metadata
+- `MetadataRegistry`: Registry containing all successfully loaded metadata
+
+# Directory Structure
+The metadata directory can be organized hierarchically. All `.yaml` and `.yml`
+files are discovered recursively:
+```
+metadata/
+├── generators/
+│   ├── GENROU.yaml
+│   └── GENCLS.yaml
+├── exciters/
+│   └── ESST3A.yaml
+└── governors/
+    └── TGOV1.yaml
+```
+
+# Error Handling
+- **Invalid YAML files**: Logged as warnings, parsing continues for other files
+- **Missing directory**: Throws system error (check with `isdir` first)
+- **Empty directory**: Returns empty registry (0 models, 0 categories)
+- **Oversized files**: Throws error for files exceeding $(MAX_METADATA_FILE_SIZE ÷ 1024) KB
 
 # Examples
 ```julia
-registry = load_metadata_registry("metadata")
-genrou_meta = get_model_metadata(registry, "GENROU")
+# Load bundled metadata (recommended)
+registry = load_metadata_registry(pkgdir(PowerDynData, "metadata"))
+println(keys(registry.models))  # => ["GENROU", "GENCLS", "TGOV1", ...]
+
+# Load custom metadata
+registry = load_metadata_registry("/path/to/custom/metadata")
+
+# Check if directory exists first
+metadata_dir = "my_metadata"
+if isdir(metadata_dir)
+    registry = load_metadata_registry(metadata_dir)
+else
+    @warn "Metadata directory not found: \$metadata_dir"
+end
 ```
+
+See also: [`MetadataRegistry`](@ref), [`parse_dyr`](@ref), [`parse_toml`](@ref)
 """
 function load_metadata_registry(metadata_dir::String)::MetadataRegistry
     models = Dict{String, ModelMetadata}()
@@ -97,8 +139,8 @@ function load_metadata_registry(metadata_dir::String)::MetadataRegistry
 
     @pdebug 1 "Loading metadata from: $metadata_dir"
 
-    # Recursively find all YAML files
-    for (root, dirs, files) in walkdir(metadata_dir)
+    # Recursively find all YAML metadata files
+    for (root, _, files) in walkdir(metadata_dir)
         for file in files
             if endswith(file, ".yaml") || endswith(file, ".yml")
                 filepath = joinpath(root, file)
@@ -131,17 +173,33 @@ end
     parse_metadata_file(filepath::String) -> ModelMetadata
 
 Parse a single YAML metadata file into ModelMetadata.
+
+Validates file size before loading to prevent memory issues with malformed files.
 """
 function parse_metadata_file(filepath::String)::ModelMetadata
-    yaml_data = YAML.load_file(filepath)
+    # Validate file size before loading
+    file_size = filesize(filepath)
+    if file_size > MAX_METADATA_FILE_SIZE
+        error("Metadata file too large: $filepath ($(file_size ÷ 1024) KB > $(MAX_METADATA_FILE_SIZE ÷ 1024) KB)")
+    end
 
+    yaml_data = YAML.load_file(filepath)
+    return _parse_metadata_dict(yaml_data)
+end
+
+"""
+    _parse_metadata_dict(data::Dict) -> ModelMetadata
+
+Internal function to parse metadata from a dictionary.
+"""
+function _parse_metadata_dict(data::AbstractDict)::ModelMetadata
     # Parse model-level info
-    model = yaml_data["model"]
-    parsing = yaml_data["parsing"]
+    model = data["model"]
+    parsing = data["parsing"]
 
     # Parse fields
     fields = FieldMetadata[]
-    for field_dict in yaml_data["fields"]
+    for field_dict in data["fields"]
         field_meta = FieldMetadata(
             Symbol(field_dict["name"]),
             field_dict["position"],
@@ -171,7 +229,7 @@ end
 """
     string_to_type(s::String) -> Type
 
-Convert type string from YAML to Julia Type.
+Convert type string from metadata to Julia Type.
 """
 function string_to_type(s::String)::Type
     if s == "Int" || s == "Int64"
@@ -190,7 +248,7 @@ end
 """
     parse_range(r) -> Union{Nothing, Tuple{Float64, Float64}}
 
-Parse range from YAML (can be array or nothing).
+Parse range from metadata (can be array or nothing).
 """
 function parse_range(r::Nothing)::Nothing
     return nothing
