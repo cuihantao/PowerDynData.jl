@@ -7,7 +7,7 @@ Parse a PSS/E DYR file into structured data.
 
 # Arguments
 - `source`: Path to DYR file or IO object
-- `metadata_dir`: Path to metadata directory. Defaults to bundled metadata at
+- `metadata_dir`: Path to metadata directory. Defaults to bundled YAML metadata at
   `pkgdir(PowerDynData, "metadata")`. Set to `nothing` to disable metadata and
   use indexed fields only. Can be set to a custom path for user-defined metadata.
 
@@ -63,13 +63,13 @@ end
 # Parsing utilities (to be implemented)
 
 """
-    skip_whitespace_and_comments(lines::Vector{SubString{String}}, i::Int) -> Int
+    skip_whitespace_and_comments(lines::AbstractVector{<:AbstractString}, i::Int) -> Int
 
 Skip whitespace and comment lines, returning index of next non-comment line.
 
 Comment markers: `@!`, `//`
 """
-function skip_whitespace_and_comments(lines::Vector{SubString{String}}, i::Int)::Int
+function skip_whitespace_and_comments(lines::AbstractVector{<:AbstractString}, i::Int)::Int
     while i <= length(lines)
         line = strip(lines[i])
 
@@ -158,7 +158,7 @@ function parse_all_records(content::String, registry::Union{MetadataRegistry, No
     i = 1
     while i <= length(lines)
         # Skip whitespace and comments
-        i = skip_whitespace_and_comments_vec(lines, i)
+        i = skip_whitespace_and_comments(lines, i)
         i > length(lines) && break
 
         # Accumulate lines until we hit terminator /
@@ -184,34 +184,6 @@ function parse_all_records(content::String, registry::Union{MetadataRegistry, No
     end
 
     return records
-end
-
-"""
-    skip_whitespace_and_comments_vec(lines::Vector{SubString{String}}, i::Int) -> Int
-
-Skip whitespace and comment lines.
-"""
-function skip_whitespace_and_comments_vec(lines::Vector{SubString{String}}, i::Int)::Int
-    while i <= length(lines)
-        line = strip(lines[i])
-
-        # Skip empty lines
-        if isempty(line)
-            i += 1
-            continue
-        end
-
-        # Skip comment lines
-        if startswith(line, "@!") || startswith(line, "//")
-            i += 1
-            continue
-        end
-
-        # Non-comment line found
-        break
-    end
-
-    return i
 end
 
 """

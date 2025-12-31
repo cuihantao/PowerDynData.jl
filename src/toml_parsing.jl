@@ -2,111 +2,57 @@
 # Alternative to DYR format with explicit field names
 
 """
+Maximum allowed size for TOML data files (in bytes).
+Large power system models may have substantial data files, but >100MB likely indicates an error.
+"""
+const MAX_TOML_FILE_SIZE = 100 * 1024 * 1024  # 100 MB
+
+"""
     parse_toml(source; metadata_dir=pkgdir(PowerDynData, "metadata")) -> DynamicData
 
 Parse a TOML file containing dynamic model data into structured data.
 
+Uses named fields (e.g., `BUS = 1`, `H = 4.0`) instead of positional fields.
+Returns the same `DynamicData` structure as `parse_dyr` for interoperability.
+
 # Arguments
 - `source`: Path to TOML file or IO object
-- `metadata_dir`: Path to metadata directory. Defaults to bundled metadata at
+- `metadata_dir`: Path to metadata directory. Defaults to bundled YAML metadata at
   `pkgdir(PowerDynData, "metadata")`. Set to `nothing` to disable metadata and
   use indexed fields only.
 
 # Returns
 - `DynamicData`: Container with all parsed models (same structure as `parse_dyr`)
 
-# TOML Format Specification
-
-The TOML format uses arrays of tables to represent multiple instances of each model type.
-Each table entry corresponds to one device record.
-
-## Structure
-- **Model arrays**: Use `[[MODEL_NAME]]` syntax (double brackets) for each device instance
-- **Field names**: Must match metadata YAML field names exactly (case-sensitive)
-- **Comments**: Use `#` for comments (preserved in TOML, unlike DYR format)
-- **Types**: TOML preserves native types (Int, Float64, String, Bool)
-
-## Field Types
-- **Integer fields**: `BUS = 1` (no quotes, no decimal)
-- **Float fields**: `H = 4.0` or `H = 4` (integers auto-promoted to Float64)
-- **String fields**: `ID = "1"` (double quotes required)
-- **Boolean fields**: `enabled = true` or `enabled = false`
-
-## Example File
+# TOML Format
+Use `[[MODEL_NAME]]` for each device instance with named fields:
 ```toml
-# IEEE 14-bus dynamic data
-# Comments are supported and encouraged
-
-# Generator models - 5 GENROU units
 [[GENROU]]
 BUS = 1
 ID = "1"
-Td10 = 6.5      # Direct axis transient time constant
-Td20 = 0.06     # Direct axis subtransient time constant
-Tq10 = 0.2      # Quadrature axis transient time constant
-Tq20 = 0.05     # Quadrature axis subtransient time constant
-H = 4.0         # Inertia constant (MW·s/MVA)
-D = 0.0         # Damping coefficient
-Xd = 1.8        # Direct axis synchronous reactance
-Xq = 1.75       # Quadrature axis synchronous reactance
-Xd1 = 0.6       # Direct axis transient reactance
-Xq1 = 0.8       # Quadrature axis transient reactance
-Xd2 = 0.23      # Direct axis subtransient reactance
-Xl = 0.15       # Leakage reactance
-S10 = 0.09      # Saturation factor at 1.0 pu
-S12 = 0.38      # Saturation factor at 1.2 pu
-
-[[GENROU]]
-BUS = 2
-ID = "1"
-# ... (remaining fields)
-
-# Governor models - TGOV1 steam turbine governors
-[[TGOV1]]
-BUS = 1
-ID = "1"
-R = 0.05        # Permanent droop (pu)
-Dt = 0.05       # Turbine damping coefficient (pu)
-Vmax = 1.05     # Maximum valve position (pu)
-Vmin = 0.3      # Minimum valve position (pu)
-T1 = 1.0        # Governor time constant (s)
-T2 = 2.1        # Turbine time constant (s)
-T3 = 0.0        # Valve positioner time constant (s)
+H = 4.0    # Comments supported
 ```
+Field names must match metadata YAML definitions exactly (case-sensitive).
 
-## Validation
+# Validation
 - Unknown fields generate warnings but parsing continues
-- Out-of-range values are recorded as validation issues (accessible via `dd.validation_issues`)
-- Missing required fields are recorded as validation issues
+- Out-of-range values recorded in `dd.validation_issues`
 - Type mismatches attempt conversion; failures recorded as parse errors
-
-## Comparison with DYR Format
-| Feature | DYR | TOML |
-|---------|-----|------|
-| Field identification | By position | By name |
-| Comments | Limited (`@!`, `//`) | Full support (`#`) |
-| Readability | Requires metadata reference | Self-documenting |
-| Version control | Difficult diffs | Clean diffs |
-| Type safety | All text | Native types |
 
 # Examples
 ```julia
-# Parse TOML file
+# With bundled metadata (default - recommended)
 dd = parse_toml("case.toml")
 
-# Access models (same API as DYR)
-genrou = dd["GENROU"]
-df = DataFrame(genrou)
-
-# Check validation issues
-if !isempty(dd.validation_issues)
-    for issue in dd.validation_issues
-        @warn "Validation: \$(issue.model_name).\$(issue.field_name): \$(issue.message)"
-    end
-end
+# Access models with named fields
+using DataFrames
+genrou_df = DataFrame(dd["GENROU"])
 
 # Without metadata (indexed fallback)
 dd = parse_toml("case.toml", metadata_dir=nothing)
+
+# With custom metadata directory
+dd = parse_toml("case.toml", metadata_dir="path/to/custom/metadata")
 ```
 
 See also: [`parse_dyr`](@ref), [`dyr_to_toml`](@ref)
@@ -120,6 +66,14 @@ function parse_toml(
 
     # Get source file path
     source_path = source isa String ? source : "<IO>"
+
+    # Validate file size if reading from file path
+    if source isa String
+        file_size = filesize(source)
+        if file_size > MAX_TOML_FILE_SIZE
+            error("TOML file too large: $source ($(file_size ÷ (1024*1024)) MB > $(MAX_TOML_FILE_SIZE ÷ (1024*1024)) MB)")
+        end
+    end
 
     # Parse TOML content
     content = source isa String ? TOML.parsefile(source) : TOML.parse(source)
