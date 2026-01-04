@@ -42,6 +42,70 @@ const CATEGORY_ORDER = [
     "Renewable Energy",
 ]
 
+# Default PSS/E version for documentation (all bundled models are version 33)
+const DEFAULT_PSSE_VERSION = 33
+
+# GitHub repository for issue reporting
+const GITHUB_REPO = "cuihantao/PowerDynData.jl"
+
+#=============================================================================
+# Helper functions for consistent sorting
+=============================================================================#
+
+"""
+    sorted_models(models) -> Vector{ModelMetadata}
+
+Sort models alphabetically by name.
+"""
+sorted_models(models) = sort(collect(models), by=m -> m.name)
+
+"""
+    sorted_model_names(models) -> Vector{String}
+
+Get sorted list of model names.
+"""
+sorted_model_names(models) = [m.name for m in sorted_models(models)]
+
+"""
+    uri_encode(s::String) -> String
+
+Simple URI encoding for issue URL parameters.
+"""
+function uri_encode(s::String)::String
+    s = replace(s, "%" => "%25")  # Must be first
+    s = replace(s, " " => "%20")
+    s = replace(s, "\n" => "%0A")
+    s = replace(s, "#" => "%23")
+    s = replace(s, "&" => "%26")
+    s = replace(s, "=" => "%3D")
+    s = replace(s, "?" => "%3F")
+    s = replace(s, "[" => "%5B")
+    s = replace(s, "]" => "%5D")
+    return s
+end
+
+"""
+    generate_issue_url(model_name::String) -> String
+
+Generate GitHub issue URL with prefilled model name and template.
+"""
+function generate_issue_url(model_name::String)::String
+    title = uri_encode("[Model] $model_name: ")
+    body = uri_encode("""
+**Model**: $model_name
+
+## Issue Description
+<!-- Describe the issue with this model's metadata -->
+
+## Expected Behavior
+<!-- What should happen? -->
+
+## Additional Context
+<!-- Any relevant details, PSS/E version, references, etc. -->
+""")
+    return "https://github.com/$GITHUB_REPO/issues/new?title=$title&body=$body&labels=model-metadata"
+end
+
 """
     get_display_category(category::String) -> String
 
@@ -132,13 +196,13 @@ function generate_parameter_table(model::PowerDynData.ModelMetadata)::String
     lines = String[]
 
     # Table header
-    push!(lines, "| Name | Type | Unit | Description | Default | Range |")
-    push!(lines, "|------|------|------|-------------|---------|-------|")
+    push!(lines, "| # | Name | Type | Unit | Description | Default | Range |")
+    push!(lines, "|---|------|------|------|-------------|---------|-------|")
 
     # Sort fields by position for consistent ordering
     sorted_fields = sort(model.fields, by=f -> f.position)
 
-    for field in sorted_fields
+    for (i, field) in enumerate(sorted_fields)
         name = string(field.name)
         type_str = format_type(field.type)
         unit = format_unit(field.unit)
@@ -146,7 +210,7 @@ function generate_parameter_table(model::PowerDynData.ModelMetadata)::String
         default = format_default(field.default)
         range = format_range(field.range)
 
-        push!(lines, "| $name | $type_str | $unit | $desc | $default | $range |")
+        push!(lines, "| $i | $name | $type_str | $unit | $desc | $default | $range |")
     end
 
     return join(lines, "\n")
@@ -167,13 +231,14 @@ function generate_model_section(model::PowerDynData.ModelMetadata)::String
     push!(lines, "")
 
     # Model info
-    push!(lines, "- **PSS/E Version**: $(33)")  # All models are version 33
+    push!(lines, "- **PSS/E Version**: $(DEFAULT_PSSE_VERSION)")
     if model.multi_line
         push!(lines, "- **Input Lines**: $(model.line_count)")
     else
         push!(lines, "- **Input Lines**: 1")
     end
     push!(lines, "- **Parameters**: $(length(model.fields))")
+    push!(lines, "- [Report an issue]($(generate_issue_url(model.name)))")
     push!(lines, "")
 
     # Parameter table
@@ -210,14 +275,14 @@ function generate_category_page(display_category::String, models::Vector{PowerDy
     # Quick navigation
     push!(lines, "## Models")
     push!(lines, "")
-    model_links = ["[$(m.name)](#$(lowercase(m.name)))" for m in sort(models, by=m -> m.name)]
+    model_links = ["[$(m.name)](#$(lowercase(m.name)))" for m in sorted_models(models)]
     push!(lines, join(model_links, " | "))
     push!(lines, "")
     push!(lines, "---")
     push!(lines, "")
 
     # Generate section for each model
-    for model in sort(models, by=m -> m.name)
+    for model in sorted_models(models)
         push!(lines, generate_model_section(model))
         push!(lines, "---")
         push!(lines, "")
@@ -248,7 +313,7 @@ function generate_overview_page(registry::PowerDynData.MetadataRegistry, categor
     for display_cat in CATEGORY_ORDER
         if haskey(category_map, display_cat)
             models = category_map[display_cat]
-            model_names = join(sort([m.name for m in models]), ", ")
+            model_names = join(sorted_model_names(models), ", ")
             filename = category_to_filename(display_cat)
             push!(lines, "| [$display_cat]($filename) | $model_names | $(length(models)) |")
         end
@@ -258,7 +323,7 @@ function generate_overview_page(registry::PowerDynData.MetadataRegistry, categor
     for display_cat in sort(collect(keys(category_map)))
         if !(display_cat in CATEGORY_ORDER)
             models = category_map[display_cat]
-            model_names = join(sort([m.name for m in models]), ", ")
+            model_names = join(sorted_model_names(models), ", ")
             filename = category_to_filename(display_cat)
             push!(lines, "| [$display_cat]($filename) | $model_names | $(length(models)) |")
         end
@@ -272,7 +337,7 @@ function generate_overview_page(registry::PowerDynData.MetadataRegistry, categor
     push!(lines, "| Model | Category | Description |")
     push!(lines, "|-------|----------|-------------|")
 
-    for model in sort(collect(values(registry.models)), by=m -> m.name)
+    for model in sorted_models(values(registry.models))
         display_cat = get_display_category(model.category)
         filename = category_to_filename(display_cat)
         anchor = lowercase(model.name)
@@ -303,6 +368,11 @@ function generate_model_docs(output_dir::String)
     # Load metadata from package directory
     metadata_dir = pkgdir(PowerDynData, "metadata")
     registry = PowerDynData.load_metadata_registry(metadata_dir)
+
+    # Validate registry has models
+    if isempty(registry.models)
+        error("No models found in metadata directory: $metadata_dir")
+    end
 
     # Create output directory
     mkpath(output_dir)
