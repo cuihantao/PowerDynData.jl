@@ -26,6 +26,9 @@ deps/src/
 /docs/build/
 docs/site/
 
+# Generated model documentation (auto-generated from YAML metadata)
+/docs/src/models/*.md
+
 # Jupyter/IJulia notebooks
 .ipynb_checkpoints/
 *.ipynb

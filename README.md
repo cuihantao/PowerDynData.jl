@@ -4,6 +4,9 @@ A Julia package for parsing PSS/E DYR (dynamics data) files with metadata-driven
 
 [![Build Status](https://github.com/cuihantao/PowerDynData.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/cuihantao/PowerDynData.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/cuihantao/PowerDynData.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/cuihantao/PowerDynData.jl)
+[![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://cuihantao.github.io/PowerDynData.jl)
+
+**[Documentation](https://cuihantao.github.io/PowerDynData.jl)** | **[Model Library](https://cuihantao.github.io/PowerDynData.jl/models/)** | **[API Reference](https://cuihantao.github.io/PowerDynData.jl/api/)**
 
 ## Features
 

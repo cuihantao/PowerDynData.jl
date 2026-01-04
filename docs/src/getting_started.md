@@ -116,4 +116,4 @@ mymodel = dd["MYMODEL"]
 mymodel isa NamedDynamicRecords  # true
 ```
 
-See the [Model Library](models/index.md) for the YAML schema structure used in metadata files.
+See the [Developer Guide](developers.md) for the YAML schema structure used in metadata files.
