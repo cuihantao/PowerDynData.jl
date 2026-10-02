@@ -10,6 +10,8 @@ parsing:
   terminator: "/"
   flexible_fields: false
 
+# Record order of the PSS/E Model Library, TGOV1 (section 7.39):
+# IBUS, 'TGOV1', ID, R, T1, VMAX, VMIN, T2, T3, Dt
 fields:
   - name: BUS
     position: 1
@@ -34,11 +36,11 @@ fields:
     required: true
     range: [0.0, Inf]
 
-  - name: Dt
+  - name: T1
     position: 5
     type: Float64
-    description: "Turbine damping coefficient"
-    unit: pu
+    description: "Governor time constant (>0)"
+    unit: seconds
     required: true
     range: [0.0, Inf]
 
@@ -57,26 +59,26 @@ fields:
     unit: pu
     required: true
 
-  - name: T1
+  - name: T2
     position: 8
     type: Float64
-    description: "Governor time constant"
-    unit: seconds
-    required: true
-    range: [0.0, Inf]
-
-  - name: T2
-    position: 9
-    type: Float64
-    description: "Turbine time constant"
+    description: "Lead time constant; T2/T3 is the high-pressure fraction"
     unit: seconds
     required: true
     range: [0.0, Inf]
 
   - name: T3
+    position: 9
+    type: Float64
+    description: "Reheater time constant (>0)"
+    unit: seconds
+    required: true
+    range: [0.0, Inf]
+
+  - name: Dt
     position: 10
     type: Float64
-    description: "Valve positioner time constant"
-    unit: seconds
+    description: "Turbine damping coefficient"
+    unit: pu
     required: true
     range: [0.0, Inf]
