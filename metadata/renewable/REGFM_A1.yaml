@@ -1,0 +1,211 @@
+model:
+  name: REGFM_A1
+  description: Droop-controlled grid-forming converter model (PNNL-35110)
+  category: renewable_converter
+  version: 33
+
+parsing:
+  model_name_field: 2
+  multi_line: true
+  terminator: /
+  flexible_fields: false
+
+fields:
+  - name: BUS
+    position: 1
+    type: Int
+    description: Bus number (interface bus)
+    unit: dimensionless
+    required: true
+
+  - name: ID
+    position: 3
+    type: String
+    description: Static generator ID
+    unit: dimensionless
+    required: true
+    default: '1'
+
+  - name: XL
+    position: 4
+    type: Float64
+    description: Coupling reactance, inverter base
+    unit: pu
+    required: true
+    default: 0.15
+
+  - name: mq
+    position: 5
+    type: Float64
+    description: Q-V droop gain
+    unit: pu
+    required: true
+    default: 0.05
+
+  - name: kpv
+    position: 6
+    type: Float64
+    description: Proportional gain of the voltage controller (VFlag = 1)
+    unit: pu
+    required: true
+    default: 0.0
+
+  - name: kiv
+    position: 7
+    type: Float64
+    description: Integral gain of the voltage controller (VFlag = 1)
+    unit: dimensionless
+    required: true
+    default: 5.86
+
+  - name: Emax
+    position: 8
+    type: Float64
+    description: Upper limit of the output of the voltage loop
+    unit: pu
+    required: true
+    default: 1.15
+
+  - name: Emin
+    position: 9
+    type: Float64
+    description: Lower limit of the output of the voltage loop
+    unit: pu
+    required: true
+    default: 0.0
+
+  - name: mp
+    position: 10
+    type: Float64
+    description: P-f droop gain
+    unit: pu
+    required: true
+    default: 0.01
+
+  - name: Pmax
+    position: 11
+    type: Float64
+    description: Upper limit of the inverter active power output
+    unit: pu
+    required: true
+    default: 0.9
+
+  - name: Pmin
+    position: 12
+    type: Float64
+    description: Lower limit of the inverter active power output (negative for energy storage)
+    unit: pu
+    required: true
+    default: 0.0
+
+  - name: kppmax
+    position: 13
+    type: Float64
+    description: Proportional gain of the overload mitigation controller
+    unit: pu
+    required: true
+    default: 0.01
+
+  - name: kipmax
+    position: 14
+    type: Float64
+    description: Integral gain of the overload mitigation controller
+    unit: dimensionless
+    required: true
+    default: 0.1
+
+  - name: w0
+    position: 15
+    type: Float64
+    description: Rated angular frequency
+    unit: rad/s
+    required: true
+    default: 376.99111843077515
+
+  - name: TPf
+    position: 16
+    type: Float64
+    description: Time constant of the low-pass filter for P measurement
+    unit: s
+    required: true
+    default: 0.01
+
+  - name: TQf
+    position: 17
+    type: Float64
+    description: Time constant of the low-pass filter for Q measurement
+    unit: s
+    required: true
+    default: 0.01
+
+  - name: TVf
+    position: 18
+    type: Float64
+    description: Time constant of the low-pass filter for V measurement
+    unit: s
+    required: true
+    default: 0.01
+
+  - name: Qmax
+    position: 19
+    type: Float64
+    description: Upper limit of the inverter reactive power output
+    unit: pu
+    required: true
+    default: 0.44
+
+  - name: Qmin
+    position: 20
+    type: Float64
+    description: Lower limit of the inverter reactive power output
+    unit: pu
+    required: true
+    default: -0.44
+
+  - name: VFlag
+    position: 21
+    type: Float64
+    description: "Voltage control mode: 1 regulates the terminal voltage V through the PI, 0 the internal voltage E directly"
+    unit: dimensionless
+    required: true
+    default: 1.0
+
+  - name: QVFlag
+    position: 22
+    type: Float64
+    description: "1: the plant controller changes Vref and the start sets Qref = 0; 0: it changes Qref and the start sets Qref = Qinv"
+    unit: dimensionless
+    required: true
+    default: 1.0
+
+  - name: kpqmax
+    position: 23
+    type: Float64
+    description: Proportional gain of the Qmax and Qmin controller (3 for VFlag = 1, 0.1 for VFlag = 0)
+    unit: pu
+    required: true
+    default: 3.0
+
+  - name: kiqmax
+    position: 24
+    type: Float64
+    description: Integral gain of the Qmax and Qmin controller (20 for VFlag = 1, 10 for VFlag = 0)
+    unit: dimensionless
+    required: true
+    default: 20.0
+
+  - name: ImaxF
+    position: 25
+    type: Float64
+    description: Inverter maximum transient output current
+    unit: pu
+    required: true
+    default: 2.0
+
+  - name: Mratio
+    position: 26
+    type: Float64
+    description: Inverter rating Mbase over the system base Sbase
+    unit: pu
+    required: true
+    default: 1.0
