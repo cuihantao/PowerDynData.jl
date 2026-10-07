@@ -201,11 +201,3 @@ fields:
     unit: pu
     required: true
     default: 2.0
-
-  - name: Mratio
-    position: 26
-    type: Float64
-    description: Inverter rating Mbase over the system base Sbase
-    unit: pu
-    required: true
-    default: 1.0
