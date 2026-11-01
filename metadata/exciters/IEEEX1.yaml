@@ -1,6 +1,6 @@
 model:
   name: IEEEX1
-  description: IEEE Type X1 excitation system (same as EXDC2)
+  description: IEEE Type 1 excitation system with a transient gain reduction
   category: exciter
   version: 33
 parsing:
@@ -110,7 +110,7 @@ fields:
   - 0.0
   - Inf
   default: 0.8
-- name: KF1
+- name: KF
   position: 13
   type: Float64
   description: Feedback gain
@@ -120,7 +120,7 @@ fields:
   - 0.0
   - Inf
   default: 0.03
-- name: TF1
+- name: TF
   position: 14
   type: Float64
   description: Feedback time constant
